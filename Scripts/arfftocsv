@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+
+sub readlist($);
+sub readln($);
+sub writelist($@);
+sub writeln($$);
+
+$BLANK = "";
+$COMMA = ",";
+$DLM = $COMMA;
+$SPACE = " ";
+
+$INFILE = $ARGV[0];
+$OUTFILE = $ARGV[1];
+
+if (defined($INFILE)) {open STDIN, "<", $INFILE || die "Failure to open input file $INFILE: $!\n"}
+if (defined($OUTFILE)) {
+  open STDOUT, ">", $OUTFILE || die "Failure to open output file $OUTFILE: $!\n"}
+
+@names = ();
+@rows = ();
+
+while(!eof(STDIN)) {
+  my $line = &readln(STDIN);
+  if ($line=~m/^%/) {next} #Skip comments
+  if ($line=~m/^\@attribute /) {
+    # Extract the name and add it to the list
+    my @word = split($SPACE, $line);
+    push @names, $word[1];
+    next;
+  }
+  if ($line=~m/^\@data$/) {
+    # Extract the data
+    while (!eof(STDIN)) {
+      my $line = &readln(STDIN);
+      if ($line eq $BLANK) {last}
+      push @rows, $line;
+    }
+  }
+}
+&writelist(STDOUT, @names);
+foreach my $row (@rows) {
+  &writeln(STDOUT, $row);
+}
+
+sub readlist($) {
+  my ($fh) = @_;
+  my $line = &readln($fh);
+  return split($DLM, $line);
+}
+
+sub readln($) {
+  my ($fh) = @_;
+  my $line = <$fh>;
+  chomp $line;
+  return $line;
+}
+
+sub writelist($@) {
+  my ($fh, @list) = @_;
+  &writeln($fh, join($DLM, @list));
+}
+
+sub writeln($$) {
+  my ($fh, $line) = @_;
+  print $fh "$line\n";
+}
