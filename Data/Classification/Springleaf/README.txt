@@ -1,0 +1,1 @@
+The Springleaf data set is too big to be included here, but can be downloaded from Kaggle.  The URL is https://www.kaggle.com/c/springleaf-marketing-response/download/la7dHKth02CW7oYqx04G%2Fversions%2FDs1Q83JoqP9GGTt2HRHa%2Ffiles%2Ftest.csv.zip.  Once downloaded and unzipped, it can be prepared by running prep.pl.

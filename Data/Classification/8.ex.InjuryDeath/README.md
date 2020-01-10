@@ -9,4 +9,4 @@ Link: http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets
 ##### Number of Instances: 15186
 ##### Number of Attributes: 11
 
-To create the modeling dataset 8.ex.InjuryDeatg_data2.csv, run prep.pl using Perl.
+To create the modeling dataset 8.ex.InjuryDeatg_data2.csv, run `prep.pl` using Perl.
