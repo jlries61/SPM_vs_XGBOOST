@@ -13,6 +13,8 @@ The purpose of this exercise is to compare holdout sample ROC between TreeNet an
   * os
   * pandas
   * random
+  * re
+  * sklearn
   * string
   * sys
   * tempfile
