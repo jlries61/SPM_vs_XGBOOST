@@ -15,7 +15,6 @@ if not os.path.isdir(report_folder):
     os.mkdir(report_folder)
 dsl = pd.read_excel("../Datasets4.xlsx")
 COMMA = ","
-NTHREADS = 4
 # rgl += pd.read_csv('RGL_NUMBERS_0.1_0.5_var2.csv')
 
 # datasets_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
