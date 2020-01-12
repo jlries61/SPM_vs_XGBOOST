@@ -13,7 +13,7 @@ class TreeNetModel(object):
         self.i_sample = -1
         self.perf = {'Name': 'TreeNet', 'Color': 'b-', 'ReportNote': report_note, 'SampleNote': ''}
 
-        self.spm_executable = "/usr/local/salford/bin/spmu"
+        self.spm_executable = "spmu"
         self.filename_output = os.getcwd().replace('\\', '/') + "/spm_output" +\
             self.perf['ReportNote'] + ".dat"
         self.filename_grove = os.getcwd().replace('\\', '/') + "/treenet_model" +\
