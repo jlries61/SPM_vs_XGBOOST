@@ -44,8 +44,37 @@ As noted above, `create_data_samples4.py` randomly draws learn, test, and holdou
 
 The other settings are as follows:
 
-| TreeNet Setting | XGBoost Setting | Value |
-| --------------- | --------------- | ----- |
+| TreeNet Setting    | TreeNet Value   | XGBoost Setting  | XGBoost Value   |
+| ------------------ | --------------- | ---------------- | --------------- |
+| PENALTY /HLC       | 1,1             | N/A              | N/A             |
+| PENALTY /MISSING   | 1,1             | N/A              | N/A             |
+| THREADS            | 4               | nthread          | 4               |
+| TREENET RGBOOST    | YES             | booster          | gbtree          |
+| N/A                | N/A             | silent           | 0               |
+| LOPTIONS MEANS     | NO              | N/A              | N/A             |
+| LOPTIONS TIMING    | NO              | N/A              | N/A             |
+| LOPTIONS GAINS     | NO              | N/A              | N/A             |
+| LOPTIONS ROC       | NO              | N/A              | N/A             |
+| LOPTIONS PLOTS     | NO              | N/A              | N/A             |
+| LOPTIONS UNS       | NO              | N/A              | N/A             |
+| TREENET TREES      | 400             | num_round        | <variable>      |
+| TREENET NODES      | 1000            | N/A              | N/A             |
+| TREENET DEPTH      | 7               | max_depth        | 7               |
+| TREENET MINCHILD   | 10              | min_child_weight | 1               |
+| TREENET LOSS       | AUTO            | eval_metric      | logloss         |
+| TREENET LEARNRATE  | 0.1             | eta              | 0.1             |
+| TREENET SUBSAMPLE  | 1.0             | subsample        | 1.0             |
+| TREENET INFLUENCE  | 0.0             | N/A              | N/A             |
+| TREENET RGL0       | 0               | gamma            | 0               |
+| TREENET RGL1       | 0               | alpha            | 0               |
+| TREENET RGL2       | 0               | lambda           | 0               |
+| TREENET PLOTS      | NO,NO,NO,NO     | N/A              | N/A             |
+| TREENET INTER      | NO              | N/A              | N/A             |
+| TREENET VPAIR      | NO              | N/A              | N/A             |
+| TREENET PREDS      | 500             | colsample_node   | <variable>      |
+| TREENET LOCAL      | NO              | N/A              | N/A             |
+| TREENET CTHRESHOLD | 0.5             | base_score       | 0.5             |
+
 
 [Data]: Data
 [Datasets4.xlsx]: Datasets4.xlsx
