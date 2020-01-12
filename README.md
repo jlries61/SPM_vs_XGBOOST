@@ -31,3 +31,4 @@ Change directory to [Scripts](Scripts).  To change the set of data sets to use, 
 1. [create_data_samples4.py](Scripts/create_data_samples4.py): Randomly partitions the source data sets as specified in [Datasets4.xlsx](Datasets4.xlsx).
 2. [rgboost4_test.py](Scripts/rgboost4_test.py): Builds the requested models and generates the associated reports (found in the `../REPORTS` subdirectory).
 3. [sumrept4.py](Scripts/sumrept4.py): Creates the summary spreadsheet `tn_vs_xgb_sumrept4.xlsx`.
+The default TN and XGBoost settings are defined in [TreeNet.py](Scripts/TreeNet.py) and [xgBoost.py](Scripts/xgBoost.py), respectively, but some are changed in [rgboost4_test.py](Scripts/rgboost4_test.py).
