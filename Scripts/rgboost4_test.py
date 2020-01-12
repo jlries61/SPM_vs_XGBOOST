@@ -112,10 +112,6 @@ for i_ck in range(0, len(cases_keys)):
         sampdir = data_folder + name + "/SAMPLES4"
         nfeat = int(dsl['N_features'][i_ds])
         ipred = int(PREDS)
-        if ipred > nfeat:
-            colsample_bytree = '1'
-        else:
-            colsample_bytree = str(ipred/nfeat)
         anycat = os.access(sampdir + "/" + "data_trainx_1.csv", os.F_OK)
 
         tn = TreeNet.TreeNetModel(report_note="")
@@ -168,7 +164,8 @@ for i_ck in range(0, len(cases_keys)):
         # if name == "Bank_marketing" and cases[key]['LEARNRATE'] == "1.0":
         #     xg.trb_eta = '0.99'
         xg.trb_subsample = SUBSAMPLE
-        xg.trb_colsample_bytree = colsample_bytree
+        if ipred < nfeat:
+            xg.trb_colsample_bynode  = str(ipred/nfeat)
         xg.trb_min_child_weight = MINCHILD_XG
         xg.trb_max_depth = DEPTH
         xg.trb_gamma = gamma_

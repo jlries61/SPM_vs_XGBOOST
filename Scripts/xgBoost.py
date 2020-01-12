@@ -43,6 +43,7 @@ class XGBoostModel(object):
         self.trb_max_delta_step = '0'
         self.trb_subsample = '1'
         self.trb_colsample_bytree = '1'
+        self.trb_colsample_bynode = '1'
         self.trb_lambda99 = '1'
         self.trb_alpha = '0'
 
