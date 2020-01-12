@@ -19,7 +19,7 @@ The purpose of this exercise is to compare holdout sample ROC between TreeNet an
   * sys
   * tempfile
   * time
-* [Exact Data Partitioner](https://github.com/jlries61/xpartition).  The script `xpartition` will need to be put in the path.
+* [Exact Data Partitioner][].  The script `xpartition` will need to be put in the path.
 
 Our scripts expect the SPM executable to be named `spmu`.  If it is not, change the value *spm_executable* in the class *TreeNetModel* (defined in [TreeNet.py][] accordingly.  All other scripts and executables are expected to have their default names.
 
@@ -33,8 +33,23 @@ Change directory to [Scripts](Scripts).  To change the set of data sets to use, 
 3. [sumrept4.py](Scripts/sumrept4.py): Creates the summary spreadsheet `tn_vs_xgb_sumrept4.xlsx`.
 The default TN and XGBoost settings are defined in [TreeNet.py][] and [xgBoost.py][], respectively, but some are changed in [rgboost4_test.py][].
 
+## What is going on?
+As noted above, `create_data_samples4.py` randomly draws learn, test, and holdout samples from the source data sets as specified in `Datasets4.xlsx` (the column is *N_data_samples*).  In all cases, the proportions are exactly two learning sample records to one test sample record, to one holdout sample record (or as close to that as the total number of records will permit) and the samples are "balanced" on the target field, meaning that the proportions of target values in the samples will equal those in the original data (again, as closely as circumstances will permit).  The partitioning is done using the [Exact Data Partitioner][], which was written for this purpose.  Since XGBoost does not directly support categorical predictors, any such predictors need to be "dummied out", meaning that they are replaced by a set of indicator fields, one per predictor class, coded 1 if the original value was equal to the corresponding class and 0 otherwise.  This is done in the "headerless" CSV files consumed by XGBoost, and where applicable, in one set of CSV files consumed by TreeNet (in the other, the original categorical predictors are used instead). (Note: due to a bug, both sets of TN input files are created even if no categorical predictors are present.  This will be fixed in due course).
+
+`rgboost4_test.py` builds an XGBoost model and either two or four TN models, depending on whether categorical predictors are present on the input data set.  The four TN models are as follows:
+* Original predictors, `TREENET MINHESS=0`.
+* Original predictors, `TREENET MINHESS=1`.
+* "Dummied out" categoricals, `TREENET MINHESS=0`.
+* "Dummied out" categoricals, `TREENET MINHESS=1`.
+
+The other settings are as follows:
+
+| TreeNet Setting | XGBoost Setting | Value |
+| --------------- | --------------- | ----- |
+
 [Data]: Data
 [Datasets4.xlsx]: Datasets4.xlsx
+[Exact Data Partitioner]: https://github.com/jlries61/xpartition
 [rgboost4_test.py]: Scripts/rgboost4_test.py
 [Springleaf]: Data/Classification/Springleaf
 [TreeNet.py]: Scripts/TreeNet.py
