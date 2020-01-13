@@ -27,7 +27,7 @@ for i in dsl.index:
   row["Name"] = dataname
   row["N Replications"] = nrepl
   row["N Features"] = dsl.loc[i, "N_features"]
-  datadir = DATADIR + SLASH + dataname + SLASH + "SAMPLES2"
+  datadir = DATADIR + SLASH + dataname + SLASH + "SAMPLES4"
   reptdir = REPTDIR + SLASH + dataname + MODSET
   trainfile1 = datadir + SLASH + "data_train_1.csv"
   holdfile1 = datadir + SLASH + "data_hold_1.csv"
