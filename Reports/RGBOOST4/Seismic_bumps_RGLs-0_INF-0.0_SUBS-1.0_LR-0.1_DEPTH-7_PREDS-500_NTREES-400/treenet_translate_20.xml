@@ -1,0 +1,2545 @@
+<?xml version="1.0"?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Header description="TreeNet Model">
+    <Application name="SPM" version="8.3.0.002"/>
+    <Timestamp>2020-01-12T01:38:24</Timestamp>
+  </Header>
+  <DataDictionary numberOfFields="15">
+    <DataField name="SEISMIC" optype="categorical" dataType="string">
+      <Value value="a" property="valid"/>
+      <Value value="b" property="valid"/>
+    </DataField>
+    <DataField name="SEISMOACOUSTIC" optype="categorical" dataType="string">
+      <Value value="a" property="valid"/>
+      <Value value="b" property="valid"/>
+      <Value value="c" property="valid"/>
+    </DataField>
+    <DataField name="SHIFT" optype="categorical" dataType="string">
+      <Value value="N" property="valid"/>
+      <Value value="W" property="valid"/>
+    </DataField>
+    <DataField name="GENERGY" optype="continuous" dataType="double"/>
+    <DataField name="GPULS" optype="continuous" dataType="double"/>
+    <DataField name="GDENERGY" optype="continuous" dataType="double"/>
+    <DataField name="GDPULS" optype="continuous" dataType="double"/>
+    <DataField name="GHAZARD" optype="categorical" dataType="string">
+      <Value value="a" property="valid"/>
+      <Value value="b" property="valid"/>
+      <Value value="c" property="valid"/>
+    </DataField>
+    <DataField name="NBUMPS" optype="continuous" dataType="double"/>
+    <DataField name="NBUMPS2" optype="continuous" dataType="double"/>
+    <DataField name="NBUMPS3" optype="continuous" dataType="double"/>
+    <DataField name="NBUMPS4" optype="continuous" dataType="double"/>
+    <DataField name="ENERGY" optype="continuous" dataType="double"/>
+    <DataField name="MAXENERGY" optype="continuous" dataType="double"/>
+    <DataField name="CLASS" optype="categorical" dataType="integer">
+      <Value value="0" property="valid"/>
+      <Value value="1" property="valid"/>
+    </DataField>
+    <!--If an INIT variable was used to develop this model, then uncomment the following element and change the variable name to the one actually used (and increment numberOfFields).  You will also need to uncomment the appropriate elements in the mining schema and in the final regression.-->
+    <!--DataField name='init' displayName='TreeNet initialization variable' optype='continuous' dataType='double'-->
+  </DataDictionary>
+  <MiningModel modelName="TreeNet_1" functionName="classification" algorithmName="MART">
+    <MiningSchema>
+      <MiningField name="CLASS" usageType="predicted" invalidValueTreatment="asMissing" missingValueTreatment="asIs"/>
+      <MiningField name="SEISMIC" usageType="active" importance="0.300163144743938" invalidValueTreatment="asMissing" missingValueTreatment="asMode" missingValueReplacement="a"/>
+      <MiningField name="SEISMOACOUSTIC" usageType="active" importance="0.368614440557387" invalidValueTreatment="asMissing" missingValueTreatment="asMode" missingValueReplacement="a"/>
+      <MiningField name="SHIFT" usageType="active" importance="0.267550524577508" invalidValueTreatment="asMissing" missingValueTreatment="asMode" missingValueReplacement="W"/>
+      <MiningField name="GHAZARD" usageType="active" importance="0.238090074271399" invalidValueTreatment="asMissing" missingValueTreatment="asMode" missingValueReplacement="a"/>
+      <MiningField name="GENERGY" usageType="active" importance="0.761070114678402" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="26360"/>
+      <MiningField name="GPULS" usageType="active" importance="1" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="382"/>
+      <MiningField name="GDENERGY" usageType="active" importance="0.724074697910486" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="-5"/>
+      <MiningField name="GDPULS" usageType="active" importance="0.565875681465153" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="-5"/>
+      <MiningField name="NBUMPS" usageType="active" importance="0.819301734807514" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="0"/>
+      <MiningField name="NBUMPS2" usageType="active" importance="0.298310505254886" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="0"/>
+      <MiningField name="NBUMPS3" usageType="active" importance="0.237319901659019" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="0"/>
+      <MiningField name="NBUMPS4" usageType="active" importance="0.143686813895598" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="0"/>
+      <MiningField name="ENERGY" usageType="active" importance="0.574016360035606" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="0"/>
+      <MiningField name="MAXENERGY" usageType="active" importance="0.240015105446678" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="0"/>
+      <!--If an INIT variable was used, then uncomment the following element and set the name appropriately-->
+      <!--MiningField name='init' usageType='active' missingValueReplacement='0'-->
+    </MiningSchema>
+    <Output>
+      <OutputField name="PROB_0" optype="continuous" dataType="double" feature="probability" targetField="CLASS" value="0"/>
+      <OutputField name="PROB_1" optype="continuous" dataType="double" feature="probability" targetField="CLASS" value="1"/>
+      <OutputField name="PREDICTION" optype="categorical" dataType="integer" targetField="CLASS" feature="transformedValue">
+        <Discretize field="PROB_1" dataType="integer" defaultValue="0">
+          <DiscretizeBin binValue="1">
+            <Interval closure="openOpen" leftMargin="0.5"/>
+          </DiscretizeBin>
+        </Discretize>
+      </OutputField>
+    </Output>
+    <Segmentation multipleModelMethod="modelChain">
+      <Segment id="Tree1">
+        <True/>
+        <TreeModel modelName="Tree1" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMIC" usageType="active"/>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="SHIFT" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS2" usageType="active"/>
+            <MiningField name="NBUMPS3" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response1" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node1" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-1.33295225728038">
+            <True/>
+            <Node id="-2" score="-1.35255213772627">
+              <SimplePredicate field="GPULS" operator="lessThan" value="1255.5"/>
+              <Node id="-3" score="-1.37149116220882">
+                <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+                <Node id="-4" score="-1.37925432885599">
+                  <SimplePredicate field="GDENERGY" operator="lessThan" value="88.5"/>
+                  <Node id="-5" score="-1.39134529568502">
+                    <SimplePredicate field="GENERGY" operator="lessThan" value="18585"/>
+                    <Node id="-6" score="-1.39530110677083">
+                      <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                      <Node id="1" score="-1.38642909163136">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="3.5"/>
+                      </Node>
+                      <Node id="-7" score="-1.38546781539917">
+                        <True/>
+                        <Node id="2" score="-1.31165417757901">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                        </Node>
+                        <Node id="3" score="-1.38642916472062">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-8" score="-1.3723266797188">
+                      <True/>
+                      <Node id="-9" score="-1.34241220686171">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="10915"/>
+                        <Node id="4" score="-1.38642907142639">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="-44"/>
+                        </Node>
+                        <Node id="5" score="-1.30417671203613">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="6" score="-1.38642910548619">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-10" score="-1.36562943339941">
+                    <True/>
+                    <Node id="7" score="-1.23687926205722">
+                      <SimplePredicate field="GENERGY" operator="lessThan" value="19075"/>
+                    </Node>
+                    <Node id="-11" score="-1.36983480233975">
+                      <True/>
+                      <Node id="-12" score="-1.35839942547915">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="609"/>
+                        <Node id="8" score="-1.33915763065733">
+                          <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                        </Node>
+                        <Node id="9" score="-1.37852023198054">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="10" score="-1.38642910307488">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-13" score="-1.31922768420122">
+                  <True/>
+                  <Node id="-14" score="-1.24579379869544">
+                    <SimplePredicate field="GDENERGY" operator="lessThan" value="121.5"/>
+                    <Node id="-15" score="-1.30973243713379">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="111"/>
+                      <Node id="11" score="-1.38642908179242">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="48475"/>
+                      </Node>
+                      <Node id="12" score="-1.16210434653542">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="13" score="-1.11225430170695">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-16" score="-1.36093073715398">
+                    <True/>
+                    <Node id="14" score="-1.38642911557798">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="130.5"/>
+                    </Node>
+                    <Node id="-17" score="-1.28685661598488">
+                      <True/>
+                      <Node id="15" score="-1.38642907142639">
+                        <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                      </Node>
+                      <Node id="16" score="-1.16210434653542">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-18" score="-1.25202183079075">
+                <True/>
+                <Node id="-19" score="-1.29233389840999">
+                  <SimplePredicate field="GPULS" operator="lessThan" value="744"/>
+                  <Node id="-20" score="-1.34918724618307">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="SEISMOACOUSTIC" operator="isMissing"/>
+                      <SimpleSetPredicate field="SEISMOACOUSTIC" booleanOperator="isIn">
+                        <Array n="2" type="string">"a" "c"</Array>
+                      </SimpleSetPredicate>
+                    </CompoundPredicate>
+                    <Node id="-21" score="-1.36898228742074">
+                      <SimplePredicate field="NBUMPS3" operator="lessThan" value="2.5"/>
+                      <Node id="17" score="-1.386429112132">
+                        <SimplePredicate field="NBUMPS2" operator="lessThan" value="1.5"/>
+                      </Node>
+                      <Node id="-22" score="-1.326539175851">
+                        <True/>
+                        <Node id="18" score="-1.25988696171687">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="-7"/>
+                        </Node>
+                        <Node id="19" score="-1.38642908732096">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="20" score="-1.25988696171687">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-23" score="-1.21463445027669">
+                    <True/>
+                    <Node id="21" score="-1.09267044067383">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="-13.5"/>
+                    </Node>
+                    <Node id="-24" score="-1.26753292913022">
+                      <True/>
+                      <Node id="-25" score="-1.36093069005896">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="a"/>
+                        <Node id="22" score="-1.38642917979847">
+                          <SimplePredicate field="SHIFT" operator="equal" value="W"/>
+                        </Node>
+                        <Node id="23" score="-1.22192420959473">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="24" score="-1.16997528076172">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-26" score="-1.11889799251113">
+                  <True/>
+                  <Node id="-27" score="-1.15406529496356">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="SEISMOACOUSTIC" operator="isMissing"/>
+                      <SimpleSetPredicate field="SEISMOACOUSTIC" booleanOperator="isIn">
+                        <Array n="2" type="string">"a" "b"</Array>
+                      </SimpleSetPredicate>
+                    </CompoundPredicate>
+                    <Node id="25" score="-1.0779824256897">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="907.5"/>
+                    </Node>
+                    <Node id="-28" score="-1.23796775817871">
+                      <True/>
+                      <Node id="26" score="-1.16210425983776">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="114535"/>
+                      </Node>
+                      <Node id="27" score="-1.32767731802804">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="28" score="-0.56390392780304">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-29" score="-1.1499677734375">
+              <True/>
+              <Node id="29" score="-0.950974969302907">
+                <SimplePredicate field="GDENERGY" operator="lessThan" value="-29.5"/>
+              </Node>
+              <Node id="-30" score="-1.19426402339229">
+                <True/>
+                <Node id="-31" score="-1.25338947342103">
+                  <SimplePredicate field="GPULS" operator="lessThan" value="2310"/>
+                  <Node id="30" score="-1.38642911911011">
+                    <SimplePredicate field="GDENERGY" operator="lessThan" value="-10.5"/>
+                  </Node>
+                  <Node id="-32" score="-1.20749167790489">
+                    <True/>
+                    <Node id="-33" score="-1.02296773592631">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="9.5"/>
+                      <Node id="31" score="-1.15142209189279">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="a"/>
+                      </Node>
+                      <Node id="32" score="-0.975166893005371">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-34" score="-1.32104462843675">
+                      <True/>
+                      <Node id="-35" score="-1.27296773592631">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="375210"/>
+                        <Node id="33" score="-1.33502125740051">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="34" score="-1.18079793453217">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="35" score="-1.38642908732096">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-36" score="-0.997967758178711">
+                  <True/>
+                  <Node id="36" score="-0.916415078299386">
+                    <SimplePredicate field="GENERGY" operator="lessThan" value="962745"/>
+                  </Node>
+                  <Node id="37" score="-1.23687926205722">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree2">
+        <True/>
+        <TreeModel modelName="Tree2" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMIC" usageType="active"/>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS2" usageType="active"/>
+            <MiningField name="NBUMPS3" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response2" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node2" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00137507601788169">
+            <True/>
+            <Node id="-2" score="-0.0269423635769995">
+              <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+              <Node id="-3" score="-0.0346447167147594">
+                <SimplePredicate field="GPULS" operator="lessThan" value="1408"/>
+                <Node id="-4" score="-0.0412117515370147">
+                  <SimplePredicate field="GDENERGY" operator="lessThan" value="88.5"/>
+                  <Node id="-5" score="-0.0528332792370525">
+                    <SimplePredicate field="GENERGY" operator="lessThan" value="18585"/>
+                    <Node id="-6" score="-0.0564013875325521">
+                      <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                      <Node id="1" score="-0.0531241562406896">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="3.5"/>
+                      </Node>
+                      <Node id="-7" score="-0.047524756193161">
+                        <True/>
+                        <Node id="2" score="0.0184346247803081">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                        </Node>
+                        <Node id="3" score="-0.0531241582787555">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-8" score="-0.035678900205172">
+                      <True/>
+                      <Node id="-9" score="-0.00651776376697752">
+                        <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                        <Node id="4" score="0.0778265457886916">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="2500"/>
+                        </Node>
+                        <Node id="5" score="-0.0533116174780804">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-10" score="-0.0606741621380761">
+                        <True/>
+                        <Node id="6" score="-0.0534627948488508">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="10820"/>
+                        </Node>
+                        <Node id="7" score="-0.053124155317034">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-11" score="-0.0284646521469005">
+                    <True/>
+                    <Node id="8" score="0.0726159594275735">
+                      <SimplePredicate field="GENERGY" operator="lessThan" value="19075"/>
+                    </Node>
+                    <Node id="-12" score="-0.0320920374856066">
+                      <True/>
+                      <Node id="-13" score="-0.0251671688373272">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="44.5"/>
+                        <Node id="9" score="-0.0357038571284367">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="-3.5"/>
+                        </Node>
+                        <Node id="10" score="-0.000533982824820739">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-14" score="-0.0613203791828899">
+                        <True/>
+                        <Node id="11" score="-0.053356843524509">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="618.5"/>
+                        </Node>
+                        <Node id="12" score="-0.0531471595168114">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-15" score="0.00910183007900531">
+                  <True/>
+                  <Node id="-16" score="0.0439501103390469">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                    <Node id="-17" score="0.0889546227833581">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="813.5"/>
+                      <Node id="-18" score="0.0305074897466921">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="723"/>
+                        <Node id="13" score="-0.0536550804972649">
+                          <SimplePredicate field="SEISMIC" operator="equal" value="a"/>
+                        </Node>
+                        <Node id="14" score="0.145437805276168">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="15" score="0.231983602046967">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-19" score="-0.0650992760291466">
+                      <True/>
+                      <Node id="16" score="-0.0538266195970423">
+                        <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                      </Node>
+                      <Node id="17" score="-0.0531241496404012">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-20" score="-0.0665444397344822">
+                    <True/>
+                    <Node id="18" score="-0.0544282197952271">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="122"/>
+                    </Node>
+                    <Node id="-21" score="-0.0618430293839553">
+                      <True/>
+                      <Node id="19" score="-0.0531241595745087">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="731"/>
+                      </Node>
+                      <Node id="20" score="-0.0537271066145463">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-22" score="0.164846217632294">
+                <True/>
+                <Node id="-23" score="0.28046703338623">
+                  <SimplePredicate field="GDENERGY" operator="lessThan" value="34.5"/>
+                  <Node id="21" score="0.0816549509763718">
+                    <SimplePredicate field="GDENERGY" operator="lessThan" value="-3.5"/>
+                  </Node>
+                  <Node id="22" score="0.26208355029424">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="23" score="-0.006534812040627">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-24" score="0.102092541754246">
+              <True/>
+              <Node id="-25" score="0.0270842103397145">
+                <SimplePredicate field="GENERGY" operator="lessThan" value="61125"/>
+                <Node id="-26" score="0.00935601422546107">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="GHAZARD" operator="isMissing"/>
+                    <SimpleSetPredicate field="GHAZARD" booleanOperator="isIn">
+                      <Array n="2" type="string">"a" "c"</Array>
+                    </SimpleSetPredicate>
+                  </CompoundPredicate>
+                  <Node id="-27" score="-0.0174969888251761">
+                    <SimplePredicate field="NBUMPS3" operator="lessThan" value="2.5"/>
+                    <Node id="-28" score="0.0174561281289373">
+                      <SimplePredicate field="ENERGY" operator="lessThan" value="5900"/>
+                      <Node id="-29" score="-0.0240590884571984">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="3850"/>
+                        <Node id="24" score="-0.053877706113069">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="366"/>
+                        </Node>
+                        <Node id="25" score="0.0218697958870938">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="26" score="0.106318252427237">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-30" score="-0.0718685057428148">
+                      <True/>
+                      <Node id="27" score="-0.0546853989362717">
+                        <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                      </Node>
+                      <Node id="-31" score="-0.0634600579738617">
+                        <True/>
+                        <Node id="28" score="-0.0535654783248901">
+                          <SimplePredicate field="SEISMIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="29" score="-0.0533378005027771">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="30" score="0.104535151930416">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="31" score="0.150920593738556">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-32" score="0.167245767412394">
+                <True/>
+                <Node id="-33" score="0.131427588583041">
+                  <SimplePredicate field="NBUMPS" operator="lessThan" value="4.5"/>
+                  <Node id="-34" score="-0.00175594910979271">
+                    <SimplePredicate field="GPULS" operator="lessThan" value="742.5"/>
+                    <Node id="32" score="0.066979678777548">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="400.5"/>
+                    </Node>
+                    <Node id="33" score="-0.0535450511508518">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-35" score="0.178344520655545">
+                    <True/>
+                    <Node id="34" score="0.227879151701927">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="-29.5"/>
+                    </Node>
+                    <Node id="-36" score="0.117873112360636">
+                      <True/>
+                      <Node id="35" score="-0.0536655752282394">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="-7.5"/>
+                      </Node>
+                      <Node id="-37" score="0.183721830260079">
+                        <True/>
+                        <Node id="36" score="0.00832322239875793">
+                          <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                        </Node>
+                        <Node id="37" score="0.151295752138705">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="38" score="0.235145462883843">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree3">
+        <True/>
+        <TreeModel modelName="Tree3" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="SHIFT" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS2" usageType="active"/>
+            <MiningField name="NBUMPS3" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+            <MiningField name="MAXENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response3" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node3" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00199672958061053">
+            <True/>
+            <Node id="-2" score="-0.0247020150703813">
+              <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+              <Node id="-3" score="-0.0315236011183406">
+                <SimplePredicate field="GPULS" operator="lessThan" value="1408"/>
+                <Node id="-4" score="-0.0476647434146723">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="16885"/>
+                  <Node id="-5" score="-0.051087206536597">
+                    <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                    <Node id="-6" score="-0.0531959262182704">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="3.5"/>
+                      <Node id="1" score="-0.0528092596266005">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="35.5"/>
+                      </Node>
+                      <Node id="2" score="-0.0528089729222384">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-7" score="-0.0439480500048902">
+                      <True/>
+                      <Node id="3" score="0.016043248501691">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                      </Node>
+                      <Node id="-8" score="-0.0538542932934231">
+                        <True/>
+                        <Node id="4" score="-0.0528092501593418">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="90"/>
+                        </Node>
+                        <Node id="5" score="-0.053134560585022">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-9" score="-0.0298679215567453">
+                    <True/>
+                    <Node id="-10" score="4.83323819935322e-05">
+                      <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                      <Node id="6" score="0.0697134733200073">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="2500"/>
+                      </Node>
+                      <Node id="-11" score="-0.0562985897064209">
+                        <True/>
+                        <Node id="7" score="-0.0530775040388107">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="8" score="-0.0529670332159315">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-12" score="-0.0550605560603895">
+                      <True/>
+                      <Node id="9" score="-0.0531118682452611">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="10820"/>
+                      </Node>
+                      <Node id="10" score="-0.0528092434008916">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-13" score="-0.0190587332240203">
+                  <True/>
+                  <Node id="-14" score="-0.00404644526561315">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                    <Node id="-15" score="-0.0143652318128899">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="96"/>
+                      <Node id="-16" score="-0.0611495893509662">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="287"/>
+                        <Node id="11" score="-0.0536109371618791">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="19570"/>
+                        </Node>
+                        <Node id="12" score="-0.0532384061813354">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-17" score="-0.00394973615660285">
+                        <True/>
+                        <Node id="13" score="0.0241671375461392">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="543"/>
+                        </Node>
+                        <Node id="14" score="-0.0338232353443408">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-18" score="0.0919755962159899">
+                      <True/>
+                      <Node id="-19" score="0.202928247905913">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="801"/>
+                        <Node id="15" score="0.0773547725244002">
+                          <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                        </Node>
+                        <Node id="16" score="0.189002132415771">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="17" score="-0.0535570025444031">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-20" score="-0.0482187271118164">
+                    <True/>
+                    <Node id="-21" score="-0.0523709771353439">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="1212"/>
+                      <Node id="-22" score="-0.0352874199549357">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="261.5"/>
+                        <Node id="18" score="-0.0532409798714422">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="225"/>
+                        </Node>
+                        <Node id="19" score="0.030260982838544">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-23" score="-0.0576082702970853">
+                        <True/>
+                        <Node id="20" score="-0.0530447583449514">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="812"/>
+                        </Node>
+                        <Node id="21" score="-0.0534769814947377">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="22" score="0.0106607774893443">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-24" score="0.145155453681946">
+                <True/>
+                <Node id="-25" score="0.247079928716024">
+                  <SimplePredicate field="GDENERGY" operator="lessThan" value="34.5"/>
+                  <Node id="23" score="0.0629563679297765">
+                    <SimplePredicate field="GPULS" operator="lessThan" value="1739"/>
+                  </Node>
+                  <Node id="24" score="0.156286905209223">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="25" score="-0.00595071073621511">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-26" score="0.089888721704483">
+              <True/>
+              <Node id="-27" score="-0.0315007951524523">
+                <SimplePredicate field="GPULS" operator="lessThan" value="283.5"/>
+                <Node id="26" score="0.0593984768940852">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="19190"/>
+                </Node>
+                <Node id="-28" score="-0.0769047513604164">
+                  <True/>
+                  <Node id="27" score="-0.0576028525829315">
+                    <SimplePredicate field="GHAZARD" operator="equal" value="b"/>
+                  </Node>
+                  <Node id="-29" score="-0.0751278938785676">
+                    <True/>
+                    <Node id="-30" score="-0.0683996200561523">
+                      <SimplePredicate field="NBUMPS" operator="lessThan" value="3.5"/>
+                      <Node id="28" score="-0.0542720059553782">
+                        <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                      </Node>
+                      <Node id="29" score="-0.0535376923424857">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="30" score="-0.0549194650216536">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-31" score="0.115777481223735">
+                <True/>
+                <Node id="-32" score="0.0896618301804001">
+                  <SimplePredicate field="NBUMPS3" operator="lessThan" value="2.5"/>
+                  <Node id="-33" score="-0.00534518460432688">
+                    <SimplePredicate field="GENERGY" operator="lessThan" value="58310"/>
+                    <Node id="31" score="0.101534682161668">
+                      <SimplePredicate field="ENERGY" operator="lessThan" value="2350"/>
+                    </Node>
+                    <Node id="-34" score="-0.0677986921266068">
+                      <True/>
+                      <Node id="32" score="-0.0559528221686681">
+                        <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                      </Node>
+                      <Node id="-35" score="-0.0656160652637482">
+                        <True/>
+                        <Node id="33" score="-0.0534161542143141">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="594.5"/>
+                        </Node>
+                        <Node id="34" score="-0.0541716466347376">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-36" score="0.135265197753906">
+                    <True/>
+                    <Node id="-37" score="-0.00795446056872606">
+                      <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                      <Node id="-38" score="-0.0324802706318517">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="isMissing"/>
+                          <SimpleSetPredicate field="SEISMOACOUSTIC" booleanOperator="isIn">
+                            <Array n="2" type="string">"a" "b"</Array>
+                          </SimpleSetPredicate>
+                        </CompoundPredicate>
+                        <Node id="35" score="0.0389394407922571">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="-18.5"/>
+                        </Node>
+                        <Node id="36" score="-0.0554122567176819">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="37" score="0.201894640922546">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-39" score="0.184545086276147">
+                      <True/>
+                      <Node id="-40" score="0.0240868834348825">
+                        <SimplePredicate field="MAXENERGY" operator="lessThan" value="1500"/>
+                        <Node id="38" score="0.0953240761390099">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="1250"/>
+                        </Node>
+                        <Node id="39" score="-0.0567943362089304">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-41" score="0.246812450352">
+                        <True/>
+                        <Node id="40" score="0.208184925715129">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="4250"/>
+                        </Node>
+                        <Node id="41" score="0.10394261433528">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-42" score="0.30160038287823">
+                  <True/>
+                  <Node id="42" score="0.0507656106582055">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="14100"/>
+                  </Node>
+                  <Node id="43" score="0.237109294304481">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree4">
+        <True/>
+        <TreeModel modelName="Tree4" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="SHIFT" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS2" usageType="active"/>
+            <MiningField name="NBUMPS4" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+            <MiningField name="MAXENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response4" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node4" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00234592809765701">
+            <True/>
+            <Node id="-2" score="-0.0225344643169388">
+              <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+              <Node id="-3" score="-0.0286285082499186">
+                <SimplePredicate field="GPULS" operator="lessThan" value="1408"/>
+                <Node id="-4" score="-0.0431480319818593">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="16885"/>
+                  <Node id="-5" score="-0.0462167603628976">
+                    <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                    <Node id="-6" score="-0.0481205597466846">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="3.5"/>
+                      <Node id="1" score="-0.0525276749222367">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="35.5"/>
+                      </Node>
+                      <Node id="2" score="-0.0525274276733398">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-7" score="-0.03977136726839">
+                      <True/>
+                      <Node id="3" score="0.0140251991423694">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                      </Node>
+                      <Node id="-8" score="-0.048715869585673">
+                        <True/>
+                        <Node id="4" score="-0.0525276660919189">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="90"/>
+                        </Node>
+                        <Node id="5" score="-0.0528196367350492">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-9" score="-0.0271906324795314">
+                    <True/>
+                    <Node id="-10" score="-0.000334023265168071">
+                      <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                      <Node id="6" score="0.0553958465655645">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="2500"/>
+                      </Node>
+                      <Node id="-11" score="-0.050926262140274">
+                        <True/>
+                        <Node id="7" score="-0.052767758568128">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="8" score="-0.0526689759322575">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-12" score="-0.0498067234691821">
+                      <True/>
+                      <Node id="9" score="-0.0527984627655574">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="10820"/>
+                      </Node>
+                      <Node id="10" score="-0.0525276710589727">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-13" score="-0.0174159223074591">
+                  <True/>
+                  <Node id="-14" score="-0.00391748587718871">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                    <Node id="-15" score="-0.0178170123067843">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="88.5"/>
+                      <Node id="-16" score="-0.0037706076251387">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="613"/>
+                        <Node id="11" score="-0.0397304432732718">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="318.5"/>
+                        </Node>
+                        <Node id="12" score="0.0132244977545231">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-17" score="-0.0535253444349909">
+                        <True/>
+                        <Node id="13" score="-0.0527919431527456">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="1061.5"/>
+                        </Node>
+                        <Node id="14" score="-0.0534496199000965">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-18" score="0.0491534332176308">
+                      <True/>
+                      <Node id="-19" score="0.10180279787849">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="813.5"/>
+                        <Node id="15" score="-0.0149445253259995">
+                          <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                        </Node>
+                        <Node id="16" score="0.0915606582865996">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-20" score="-0.0541203159552354">
+                        <True/>
+                        <Node id="17" score="-0.053128158344942">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="18" score="-0.0525924331612057">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-21" score="-0.0436353983055235">
+                    <True/>
+                    <Node id="-22" score="-0.0473875759700157">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="1212"/>
+                      <Node id="-23" score="-0.0319822203545343">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="261.5"/>
+                        <Node id="19" score="0.0287035057942073">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="1500"/>
+                        </Node>
+                        <Node id="20" score="-0.0530733982721965">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-24" score="-0.052110386590888">
+                        <True/>
+                        <Node id="21" score="-0.0527389342324776">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="812"/>
+                        </Node>
+                        <Node id="22" score="-0.0531262781309045">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="23" score="0.0094131709386905">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-25" score="0.129207217693329">
+                <True/>
+                <Node id="-26" score="0.21998671690623">
+                  <SimplePredicate field="GDENERGY" operator="lessThan" value="34.5"/>
+                  <Node id="24" score="0.0481523523728053">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="1400"/>
+                  </Node>
+                  <Node id="25" score="0.116522719462713">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="26" score="-0.00541325565427542">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-27" score="0.0793545544147491">
+              <True/>
+              <Node id="-28" score="-0.028712526957194">
+                <SimplePredicate field="GPULS" operator="lessThan" value="283.5"/>
+                <Node id="27" score="0.0481692827664889">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="19190"/>
+                </Node>
+                <Node id="-29" score="-0.0695564821362495">
+                  <True/>
+                  <Node id="28" score="-0.0567755326628685">
+                    <SimplePredicate field="GHAZARD" operator="equal" value="b"/>
+                  </Node>
+                  <Node id="-30" score="-0.0679505948097475">
+                    <True/>
+                    <Node id="-31" score="-0.0618678867816925">
+                      <SimplePredicate field="NBUMPS" operator="lessThan" value="3.5"/>
+                      <Node id="29" score="-0.053834209839503">
+                        <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                      </Node>
+                      <Node id="30" score="-0.0531792512961796">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="31" score="-0.0544101595878601">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-32" score="0.102402040743715">
+                <True/>
+                <Node id="-33" score="0.0545987904628861">
+                  <SimplePredicate field="ENERGY" operator="lessThan" value="6050"/>
+                  <Node id="-34" score="0.0918435120001072">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="4650"/>
+                    <Node id="32" score="-0.0543252367239732">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="-22"/>
+                    </Node>
+                    <Node id="-35" score="0.122759791388028">
+                      <True/>
+                      <Node id="-36" score="0.251308123270671">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="10"/>
+                        <Node id="33" score="0.0437130194443923">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="58310"/>
+                        </Node>
+                        <Node id="34" score="0.171484300068447">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-37" score="0.0401215751965841">
+                        <True/>
+                        <Node id="35" score="-0.0553232922273524">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="56.5"/>
+                        </Node>
+                        <Node id="36" score="0.0654598808288574">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-38" score="-0.0675638914108276">
+                    <True/>
+                    <Node id="37" score="-0.0577342005876394">
+                      <SimplePredicate field="MAXENERGY" operator="lessThan" value="3500"/>
+                    </Node>
+                    <Node id="38" score="-0.010761567701896">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-39" score="0.151584230936491">
+                  <True/>
+                  <Node id="-40" score="0.310105288470233">
+                    <SimplePredicate field="GDPULS" operator="lessThan" value="-18.5"/>
+                    <Node id="39" score="0.178541819254557">
+                      <SimplePredicate field="NBUMPS4" operator="lessThan" value="0.5"/>
+                    </Node>
+                    <Node id="40" score="0.0728878031174342">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-41" score="0.0959989312407258">
+                    <True/>
+                    <Node id="-42" score="0.039557105018979">
+                      <SimplePredicate field="GENERGY" operator="lessThan" value="668150"/>
+                      <Node id="-43" score="0.131663737758513">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="21000"/>
+                        <Node id="41" score="0.118415130509271">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="31.5"/>
+                        </Node>
+                        <Node id="42" score="0.00342782672781211">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-44" score="-0.0496711879968643">
+                        <True/>
+                        <Node id="43" score="-0.0394846200942993">
+                          <CompoundPredicate booleanOperator="or">
+                            <SimplePredicate field="SEISMOACOUSTIC" operator="isMissing"/>
+                            <SimpleSetPredicate field="SEISMOACOUSTIC" booleanOperator="isIn">
+                              <Array n="2" type="string">"a" "b"</Array>
+                            </SimpleSetPredicate>
+                          </CompoundPredicate>
+                        </Node>
+                        <Node id="44" score="0.151432693004608">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="45" score="0.141878025872367">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree5">
+        <True/>
+        <TreeModel modelName="Tree5" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS2" usageType="active"/>
+            <MiningField name="NBUMPS3" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response5" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node5" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00253703479796371">
+            <True/>
+            <Node id="-2" score="-0.0205257353175101">
+              <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+              <Node id="-3" score="-0.0259857752236975">
+                <SimplePredicate field="GPULS" operator="lessThan" value="1408"/>
+                <Node id="-4" score="-0.0390567603748515">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="16885"/>
+                  <Node id="-5" score="-0.0418116810557606">
+                    <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                    <Node id="-6" score="-0.0435306236837258">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="3.5"/>
+                      <Node id="1" score="-0.052275601139775">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="35.5"/>
+                      </Node>
+                      <Node id="2" score="-0.052275381305001">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-7" score="-0.0359921283032521">
+                      <True/>
+                      <Node id="3" score="0.0123074068264528">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                      </Node>
+                      <Node id="-8" score="-0.0440689490901099">
+                        <True/>
+                        <Node id="4" score="-0.0522755951177878">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="90"/>
+                        </Node>
+                        <Node id="5" score="-0.0525378584861755">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-9" score="-0.024731171131134">
+                    <True/>
+                    <Node id="-10" score="-0.00059604225680232">
+                      <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                      <Node id="6" score="0.0452616463104884">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="2500"/>
+                      </Node>
+                      <Node id="-11" score="-0.0460679411888123">
+                        <True/>
+                        <Node id="7" score="-0.0524907112121582">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="8" score="-0.0524022792066847">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-12" score="-0.045055489791067">
+                      <True/>
+                      <Node id="9" score="-0.0525181804384504">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="10820"/>
+                      </Node>
+                      <Node id="10" score="-0.0522755980491638">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-13" score="-0.015891811601632">
+                  <True/>
+                  <Node id="-14" score="-0.00374316880002497">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                    <Node id="-15" score="-0.0125863331467358">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="96"/>
+                      <Node id="-16" score="-0.0518780379998879">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="287"/>
+                        <Node id="11" score="-0.0537726022303104">
+                          <SimplePredicate field="GHAZARD" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="12" score="-0.052749557010198">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-17" score="-0.0038389098035158">
+                        <True/>
+                        <Node id="13" score="0.01866773125175">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="543"/>
+                        </Node>
+                        <Node id="14" score="-0.0318202826812977">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-18" score="0.0785473850038317">
+                      <True/>
+                      <Node id="15" score="0.113370021184285">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="183.5"/>
+                      </Node>
+                      <Node id="16" score="-0.0184790243705114">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-19" score="-0.0394894365240766">
+                    <True/>
+                    <Node id="-20" score="-0.0428803220141533">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="1212"/>
+                      <Node id="-21" score="-0.028990143821353">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="261.5"/>
+                        <Node id="17" score="-0.0527484147779403">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="225"/>
+                        </Node>
+                        <Node id="18" score="0.0301396386189894">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-22" score="-0.0471386248177856">
+                        <True/>
+                        <Node id="19" score="-0.0524652840798361">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="812"/>
+                        </Node>
+                        <Node id="20" score="-0.0528127680654111">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="21" score="0.00833063758909702">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-23" score="0.1154292345047">
+                <True/>
+                <Node id="22" score="0.101609836022059">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="183285"/>
+                </Node>
+                <Node id="-24" score="0.0745875324521746">
+                  <True/>
+                  <Node id="23" score="-0.0178218611649105">
+                    <SimplePredicate field="ENERGY" operator="lessThan" value="550"/>
+                  </Node>
+                  <Node id="24" score="0.0660622205053057">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-25" score="0.0702609866857529">
+              <True/>
+              <Node id="-26" score="-0.0728941644941058">
+                <SimplePredicate field="GPULS" operator="lessThan" value="176"/>
+                <Node id="25" score="-0.0550335248311361">
+                  <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                </Node>
+                <Node id="26" score="-0.0536525944868724">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-27" score="0.0830535726344332">
+                <True/>
+                <Node id="-28" score="0.070340599332537">
+                  <SimplePredicate field="NBUMPS3" operator="lessThan" value="3.5"/>
+                  <Node id="-29" score="-0.0213460822900136">
+                    <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                    <Node id="27" score="0.0446182168447054">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="-21"/>
+                    </Node>
+                    <Node id="-30" score="-0.0653331143515451">
+                      <True/>
+                      <Node id="-31" score="-0.0848949726890115">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="isMissing"/>
+                          <SimpleSetPredicate field="SEISMOACOUSTIC" booleanOperator="isIn">
+                            <Array n="2" type="string">"a" "b"</Array>
+                          </SimpleSetPredicate>
+                        </CompoundPredicate>
+                        <Node id="28" score="-0.0541543960571289">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="1563.5"/>
+                        </Node>
+                        <Node id="29" score="-0.0580285299908031">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="30" score="0.124928131699562">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-32" score="0.095346060666171">
+                    <True/>
+                    <Node id="-33" score="0.0800399202289003">
+                      <SimplePredicate field="ENERGY" operator="lessThan" value="70650"/>
+                      <Node id="31" score="-0.0550813620740717">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="-57"/>
+                      </Node>
+                      <Node id="-34" score="0.0914541529370593">
+                        <True/>
+                        <Node id="32" score="0.145505135709589">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="-36.5"/>
+                        </Node>
+                        <Node id="33" score="0.0398566139327896">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="34" score="0.150515729730779">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="35" score="0.108849287033081">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree6">
+        <True/>
+        <TreeModel modelName="Tree6" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMIC" usageType="active"/>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="SHIFT" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS3" usageType="active"/>
+            <MiningField name="NBUMPS4" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+            <MiningField name="MAXENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response6" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node6" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00256851786061337">
+            <True/>
+            <Node id="-2" score="-0.0186820011801701">
+              <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+              <Node id="-3" score="-0.0235754821195181">
+                <SimplePredicate field="GPULS" operator="lessThan" value="1408"/>
+                <Node id="-4" score="-0.0348704022876287">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="18585"/>
+                  <Node id="-5" score="-0.0388352620937025">
+                    <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                    <Node id="-6" score="-0.0399302856342213">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="3.5"/>
+                      <Node id="-7" score="-0.039379452471207">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="16910"/>
+                        <Node id="1" score="-0.052049696886981">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="35.5"/>
+                        </Node>
+                        <Node id="2" score="-0.0520495013757186">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="3" score="-0.0527233839035034">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-8" score="-0.0354234042920564">
+                      <True/>
+                      <Node id="4" score="0.0108345550569621">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                      </Node>
+                      <Node id="-9" score="-0.0420486160687038">
+                        <True/>
+                        <Node id="5" score="-0.052088008986579">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="16700"/>
+                        </Node>
+                        <Node id="6" score="-0.0530020842949549">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-10" score="-0.0157313832530269">
+                    <True/>
+                    <Node id="7" score="0.0870947241783142">
+                      <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                    </Node>
+                    <Node id="-11" score="-0.0361764120019">
+                      <True/>
+                      <Node id="-12" score="-0.0514806999879725">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="-6.5"/>
+                        <Node id="8" score="-0.0521353398050581">
+                          <SimplePredicate field="NBUMPS3" operator="lessThan" value="0.5"/>
+                        </Node>
+                        <Node id="9" score="-0.0541508353274801">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="10" score="0.00786619053946601">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-13" score="-0.0134014309817598">
+                  <True/>
+                  <Node id="-14" score="0.00101474265745081">
+                    <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                    <Node id="-15" score="0.0900528430938721">
+                      <SimplePredicate field="GENERGY" operator="lessThan" value="21250"/>
+                      <Node id="11" score="0.218705524097789">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="-25.5"/>
+                      </Node>
+                      <Node id="-16" score="0.00477307920272534">
+                        <True/>
+                        <Node id="12" score="-0.0220979899168015">
+                          <SimplePredicate field="GHAZARD" operator="equal" value="a"/>
+                        </Node>
+                        <Node id="13" score="0.226564884185791">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-17" score="-0.0103845984053034">
+                      <True/>
+                      <Node id="-18" score="-0.000297049131799251">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="66275"/>
+                        <Node id="14" score="-0.0151233227566035">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="48475"/>
+                        </Node>
+                        <Node id="15" score="0.0729760479282688">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-19" score="-0.0542841178399545">
+                        <True/>
+                        <Node id="16" score="-0.0533525864283244">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="778.5"/>
+                        </Node>
+                        <Node id="17" score="-0.0526889562606812">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-20" score="-0.0371371519685996">
+                    <True/>
+                    <Node id="-21" score="-0.0401766018200946">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="1212"/>
+                      <Node id="-22" score="-0.0241517241184528">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="261.5"/>
+                        <Node id="18" score="-0.0525881562914167">
+                          <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                        </Node>
+                        <Node id="19" score="0.0350362766872753">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-23" score="-0.044428098769415">
+                        <True/>
+                        <Node id="20" score="-0.0535912066698074">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                        </Node>
+                        <Node id="21" score="-0.0522863955898139">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="22" score="0.00738718919456005">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-24" score="0.103165674209595">
+                <True/>
+                <Node id="-25" score="0.180922448635101">
+                  <SimplePredicate field="GDENERGY" operator="lessThan" value="34.5"/>
+                  <Node id="23" score="0.0250792503356934">
+                    <SimplePredicate field="GDENERGY" operator="lessThan" value="-3.5"/>
+                  </Node>
+                  <Node id="24" score="0.0903000930945079">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="25" score="-0.00966620352119207">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-26" score="0.0626407340168953">
+              <True/>
+              <Node id="-27" score="-0.065930133774167">
+                <SimplePredicate field="GPULS" operator="lessThan" value="176"/>
+                <Node id="26" score="-0.0545211997297075">
+                  <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                </Node>
+                <Node id="27" score="-0.0532819926738739">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-28" score="0.0741300461140085">
+                <True/>
+                <Node id="-29" score="0.036620686131139">
+                  <SimplePredicate field="MAXENERGY" operator="lessThan" value="4500"/>
+                  <Node id="-30" score="0.00333442787329356">
+                    <SimplePredicate field="GDENERGY" operator="lessThan" value="66.5"/>
+                    <Node id="-31" score="0.0499177808346956">
+                      <SimplePredicate field="ENERGY" operator="lessThan" value="4600"/>
+                      <Node id="-32" score="0.103280679039333">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="10"/>
+                        <Node id="28" score="0.0125141879543662">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="-12"/>
+                        </Node>
+                        <Node id="29" score="0.127545101302011">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-33" score="-0.0568080103915671">
+                        <True/>
+                        <Node id="30" score="-0.0551422509280118">
+                          <CompoundPredicate booleanOperator="or">
+                            <SimplePredicate field="SEISMOACOUSTIC" operator="isMissing"/>
+                            <SimpleSetPredicate field="SEISMOACOUSTIC" booleanOperator="isIn">
+                              <Array n="2" type="string">"a" "b"</Array>
+                            </SimpleSetPredicate>
+                          </CompoundPredicate>
+                        </Node>
+                        <Node id="31" score="0.110961124300957">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-34" score="-0.115711918583623">
+                      <True/>
+                      <Node id="32" score="-0.0630564623408847">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="b"/>
+                      </Node>
+                      <Node id="33" score="-0.0558903084860908">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-35" score="0.150745000158037">
+                    <True/>
+                    <Node id="34" score="0.111189582768609">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="108.5"/>
+                    </Node>
+                    <Node id="35" score="0.0104063634168018">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-36" score="0.11603239420298">
+                  <True/>
+                  <Node id="-37" score="0.0732050488392512">
+                    <SimplePredicate field="NBUMPS" operator="lessThan" value="5.5"/>
+                    <Node id="-38" score="0.0230411024470078">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="1836"/>
+                      <Node id="-39" score="0.1287455479304">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="-11.5"/>
+                        <Node id="36" score="0.0971066488160027">
+                          <SimplePredicate field="NBUMPS4" operator="lessThan" value="0.5"/>
+                        </Node>
+                        <Node id="37" score="-0.0166622077425321">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-40" score="-0.0458965767984805">
+                        <True/>
+                        <Node id="38" score="-0.0425223666568135">
+                          <SimplePredicate field="SHIFT" operator="equal" value="W"/>
+                        </Node>
+                        <Node id="39" score="0.114995221296946">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-41" score="0.263828039169312">
+                      <True/>
+                      <Node id="40" score="-0.0559893846511841">
+                        <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                      </Node>
+                      <Node id="41" score="0.0953175958834196">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="42" score="0.1224263270696">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree7">
+        <True/>
+        <TreeModel modelName="Tree7" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMIC" usageType="active"/>
+            <MiningField name="SHIFT" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS3" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+            <MiningField name="MAXENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response7" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node7" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00267744082784505">
+            <True/>
+            <Node id="-2" score="-0.0258235435265337">
+              <SimplePredicate field="GENERGY" operator="lessThan" value="28510"/>
+              <Node id="-3" score="-0.028980479007814">
+                <SimplePredicate field="GDENERGY" operator="lessThan" value="105.5"/>
+                <Node id="-4" score="-0.0356768322529766">
+                  <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                  <Node id="-5" score="-0.0303524364934903">
+                    <SimplePredicate field="GENERGY" operator="lessThan" value="9110"/>
+                    <Node id="-6" score="-0.0345536664201708">
+                      <SimplePredicate field="GENERGY" operator="lessThan" value="8785"/>
+                      <Node id="-7" score="-0.037020155837416">
+                        <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                        <Node id="1" score="-0.0518470116150685">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="229.5"/>
+                        </Node>
+                        <Node id="2" score="-0.0528363922367925">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-8" score="-0.0161577587326368">
+                        <True/>
+                        <Node id="3" score="0.0298087813637473">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="-42.5"/>
+                        </Node>
+                        <Node id="4" score="-0.0534593371244577">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="5" score="0.0567544536157088">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-9" score="-0.0438155514853341">
+                    <True/>
+                    <Node id="-10" score="-0.0409369142646464">
+                      <SimplePredicate field="NBUMPS3" operator="lessThan" value="0.5"/>
+                      <Node id="-11" score="-0.0369856154665034">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="18500"/>
+                        <Node id="6" score="-0.05189859436219">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="15600"/>
+                        </Node>
+                        <Node id="7" score="-0.0522810437462547">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-12" score="-0.0570857058400693">
+                        <True/>
+                        <Node id="8" score="-0.0560582093894482">
+                          <SimplePredicate field="SEISMIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="9" score="-0.0530054909842355">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-13" score="-0.058459064234858">
+                      <True/>
+                      <Node id="10" score="-0.0544816689057784">
+                        <SimplePredicate field="MAXENERGY" operator="lessThan" value="3500"/>
+                      </Node>
+                      <Node id="11" score="-0.0525714904069901">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-14" score="-0.0211311112965969">
+                  <True/>
+                  <Node id="-15" score="-0.00942234308631332">
+                    <SimplePredicate field="GDPULS" operator="lessThan" value="-3.5"/>
+                    <Node id="-16" score="-0.0211755719350938">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="-8.5"/>
+                      <Node id="-17" score="-0.0054469074521746">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="21250"/>
+                        <Node id="12" score="-0.0130945366361867">
+                          <SimplePredicate field="GHAZARD" operator="equal" value="a"/>
+                        </Node>
+                        <Node id="13" score="0.348236501216888">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-18" score="-0.0572741461581871">
+                        <True/>
+                        <Node id="14" score="-0.0529898915972028">
+                          <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+                        </Node>
+                        <Node id="15" score="-0.0544515798489253">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="16" score="0.151599677403768">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-19" score="-0.0505391830621764">
+                    <True/>
+                    <Node id="-20" score="-0.0477668317159017">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="72.5"/>
+                      <Node id="-21" score="-0.0499679701668876">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="615.5"/>
+                        <Node id="17" score="-0.0529904259575738">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                        </Node>
+                        <Node id="18" score="-0.0520535870031877">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="19" score="-0.0521688053482457">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="20" score="-0.0545469251545993">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-22" score="0.0317028628455268">
+                <True/>
+                <Node id="21" score="0.112327138582865">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="21200"/>
+                </Node>
+                <Node id="-23" score="-0.0703635158992949">
+                  <True/>
+                  <Node id="22" score="-0.0576557815074921">
+                    <SimplePredicate field="GHAZARD" operator="equal" value="b"/>
+                  </Node>
+                  <Node id="23" score="-0.0541306734085083">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-24" score="0.0240177329381307">
+              <True/>
+              <Node id="24" score="0.11914811929067">
+                <SimplePredicate field="GENERGY" operator="lessThan" value="29525"/>
+              </Node>
+              <Node id="-25" score="0.0200682452601245">
+                <True/>
+                <Node id="-26" score="-0.0336855053901672">
+                  <SimplePredicate field="GPULS" operator="lessThan" value="361"/>
+                  <Node id="-27" score="-0.0463461105269615">
+                    <SimplePredicate field="MAXENERGY" operator="lessThan" value="5500"/>
+                    <Node id="-28" score="-0.056185777159943">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="54.5"/>
+                      <Node id="-29" score="-0.0497658110376614">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="316.5"/>
+                        <Node id="25" score="-0.0524324226379395">
+                          <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+                        </Node>
+                        <Node id="26" score="-0.0535395916770486">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-30" score="-0.0776926577091217">
+                        <True/>
+                        <Node id="27" score="-0.05906041264534">
+                          <SimplePredicate field="SEISMIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="28" score="-0.0545969724655151">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="29" score="0.0229675595959028">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="30" score="0.0415767660507789">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-31" score="0.0327964060906376">
+                  <True/>
+                  <Node id="31" score="0.123660059536205">
+                    <SimplePredicate field="GPULS" operator="lessThan" value="389.5"/>
+                  </Node>
+                  <Node id="-32" score="0.0265657650796991">
+                    <True/>
+                    <Node id="-33" score="0.00277347126639033">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="1255.5"/>
+                      <Node id="-34" score="-0.0678659562141665">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="449.5"/>
+                        <Node id="32" score="-0.0535605072975159">
+                          <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+                        </Node>
+                        <Node id="33" score="-0.0552512894977223">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-35" score="0.0100486286454819">
+                        <True/>
+                        <Node id="34" score="0.0830463171005249">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="485.5"/>
+                        </Node>
+                        <Node id="35" score="0.00322208801905314">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-36" score="0.0902677120700959">
+                      <True/>
+                      <Node id="-37" score="0.118056459246941">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="1062020"/>
+                        <Node id="36" score="-0.0141090022193061">
+                          <SimplePredicate field="MAXENERGY" operator="lessThan" value="650"/>
+                        </Node>
+                        <Node id="37" score="0.0591474605512015">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="38" score="-0.0339527295695411">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree8">
+        <True/>
+        <TreeModel modelName="Tree8" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMIC" usageType="active"/>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="SHIFT" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="NBUMPS2" usageType="active"/>
+            <MiningField name="NBUMPS3" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response8" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node8" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00267315722840489">
+            <True/>
+            <Node id="-2" score="-0.0287296417330907">
+              <SimplePredicate field="GENERGY" operator="lessThan" value="18585"/>
+              <Node id="-3" score="-0.032936949864068">
+                <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                <Node id="-4" score="-0.0340139447031794">
+                  <SimplePredicate field="GDPULS" operator="lessThan" value="3.5"/>
+                  <Node id="-5" score="-0.0333590388722267">
+                    <SimplePredicate field="GENERGY" operator="lessThan" value="16910"/>
+                    <Node id="-6" score="-0.0356056601912887">
+                      <SimplePredicate field="SHIFT" operator="equal" value="W"/>
+                      <Node id="1" score="-0.0527000476916631">
+                        <SimplePredicate field="GHAZARD" operator="equal" value="b"/>
+                      </Node>
+                      <Node id="-7" score="-0.0352657727706127">
+                        <True/>
+                        <Node id="2" score="-0.0517993080082224">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="-11.5"/>
+                        </Node>
+                        <Node id="3" score="-0.0520703955130144">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-8" score="-0.0324491572380066">
+                      <True/>
+                      <Node id="-9" score="-0.032223852057206">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="8800"/>
+                        <Node id="4" score="-0.051665134567151">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="230"/>
+                        </Node>
+                        <Node id="5" score="-0.0516618306820209">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-10" score="-0.033162626127402">
+                        <True/>
+                        <Node id="6" score="-0.0519053448330272">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="9580"/>
+                        </Node>
+                        <Node id="7" score="-0.0516647938135508">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="8" score="-0.0525627056757609">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-11" score="-0.0295812581714831">
+                  <True/>
+                  <Node id="-12" score="0.012177593651272">
+                    <SimplePredicate field="GPULS" operator="lessThan" value="202.5"/>
+                    <Node id="9" score="-0.0516649521887302">
+                      <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                    </Node>
+                    <Node id="10" score="0.0325767958865446">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-13" score="-0.0414317427454768">
+                    <True/>
+                    <Node id="11" score="-0.0537767085162076">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="7.5"/>
+                    </Node>
+                    <Node id="-14" score="-0.0367858107127841">
+                      <True/>
+                      <Node id="-15" score="-0.0342251179265041">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="84"/>
+                        <Node id="12" score="-0.051676207780838">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="16280"/>
+                        </Node>
+                        <Node id="13" score="-0.0522063374519348">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="14" score="-0.052676185965538">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-16" score="-0.0110408567613171">
+                <True/>
+                <Node id="15" score="0.0631346354881922">
+                  <SimplePredicate field="ENERGY" operator="lessThan" value="225"/>
+                </Node>
+                <Node id="-17" score="-0.0255605585781144">
+                  <True/>
+                  <Node id="-18" score="-0.0494219362735748">
+                    <SimplePredicate field="SHIFT" operator="equal" value="N"/>
+                    <Node id="-19" score="-0.0368765110061282">
+                      <SimplePredicate field="NBUMPS3" operator="lessThan" value="0.5"/>
+                      <Node id="16" score="-0.0520316748058095">
+                        <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="a"/>
+                      </Node>
+                      <Node id="17" score="-0.0516646280884743">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-20" score="-0.0591794870517872">
+                      <True/>
+                      <Node id="18" score="-0.0541294600282397">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="3150"/>
+                      </Node>
+                      <Node id="19" score="-0.0530908061907842">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-21" score="0.00914690350041245">
+                    <True/>
+                    <Node id="20" score="0.0690223659787859">
+                      <SimplePredicate field="GENERGY" operator="lessThan" value="15000"/>
+                    </Node>
+                    <Node id="21" score="-0.0525564959174708">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-22" score="0.012934934974897">
+              <True/>
+              <Node id="-23" score="-0.00457991437709078">
+                <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+                <Node id="-24" score="-0.0116487122674025">
+                  <SimplePredicate field="GPULS" operator="lessThan" value="1408"/>
+                  <Node id="-25" score="0.00129376287840627">
+                    <SimplePredicate field="NBUMPS" operator="lessThan" value="0.5"/>
+                    <Node id="-26" score="0.0118377093058914">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="813.5"/>
+                      <Node id="-27" score="0.00170582628250122">
+                        <SimplePredicate field="GDPULS" operator="lessThan" value="96"/>
+                        <Node id="22" score="0.0556463003158569">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="21250"/>
+                        </Node>
+                        <Node id="23" score="-0.00848898975127334">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="24" score="0.0730953613917033">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-28" score="-0.0474265402760999">
+                      <True/>
+                      <Node id="-29" score="-0.0517548651530825">
+                        <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                        <Node id="25" score="-0.0525955178520896">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="40125"/>
+                        </Node>
+                        <Node id="26" score="-0.0530392792489794">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-30" score="-0.0430982153991173">
+                        <True/>
+                        <Node id="27" score="-0.0524496521268572">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="74170"/>
+                        </Node>
+                        <Node id="28" score="-0.0520944515864054">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-31" score="-0.0329580403337575">
+                    <True/>
+                    <Node id="-32" score="-0.0354833038904334">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="1212"/>
+                      <Node id="-33" score="-0.0198417107264201">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="261.5"/>
+                        <Node id="29" score="-0.0524197375332868">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                        </Node>
+                        <Node id="30" score="0.0362974032759666">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-34" score="-0.0396331151326497">
+                        <True/>
+                        <Node id="31" score="-0.0531752221286297">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="250"/>
+                        </Node>
+                        <Node id="32" score="-0.0520589333454161">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="33" score="0.00438259976605574">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-35" score="0.0880213379859924">
+                  <True/>
+                  <Node id="34" score="-0.0560290515422821">
+                    <SimplePredicate field="GHAZARD" operator="equal" value="b"/>
+                  </Node>
+                  <Node id="-36" score="0.10862590206994">
+                    <True/>
+                    <Node id="35" score="0.0183447043100993">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="7.5"/>
+                    </Node>
+                    <Node id="-37" score="0.144547939300537">
+                      <True/>
+                      <Node id="36" score="0.0293016185363134">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="a"/>
+                      </Node>
+                      <Node id="37" score="0.0994535817040337">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-38" score="0.053420078559">
+                <True/>
+                <Node id="-39" score="0.00531362261727592">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="61125"/>
+                  <Node id="-40" score="0.0658065287963204">
+                    <SimplePredicate field="GENERGY" operator="lessThan" value="36250"/>
+                    <Node id="-41" score="-0.00912646293640137">
+                      <SimplePredicate field="NBUMPS" operator="lessThan" value="2.5"/>
+                      <Node id="38" score="0.0341625647111373">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="3250"/>
+                      </Node>
+                      <Node id="39" score="-0.0541646523135049">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-42" score="0.155012471335275">
+                      <True/>
+                      <Node id="40" score="0.0341839744494512">
+                        <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="a"/>
+                      </Node>
+                      <Node id="41" score="0.112421154975891">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-43" score="-0.0403039807178935">
+                    <True/>
+                    <Node id="-44" score="-0.0775335798872278">
+                      <SimplePredicate field="GDENERGY" operator="lessThan" value="70"/>
+                      <Node id="42" score="-0.0570781230926514">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="b"/>
+                      </Node>
+                      <Node id="-45" score="-0.0640340303552562">
+                        <True/>
+                        <Node id="43" score="-0.0528583801709689">
+                          <SimplePredicate field="NBUMPS" operator="lessThan" value="2.5"/>
+                        </Node>
+                        <Node id="44" score="-0.0546047575771809">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="45" score="0.0389353675501687">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-46" score="0.0909922732053882">
+                  <True/>
+                  <Node id="-47" score="0.00442991364333365">
+                    <SimplePredicate field="NBUMPS2" operator="lessThan" value="0.5"/>
+                    <Node id="46" score="-0.0555108070373535">
+                      <SimplePredicate field="ENERGY" operator="lessThan" value="8500"/>
+                    </Node>
+                    <Node id="-48" score="0.0658101921989804">
+                      <True/>
+                      <Node id="47" score="-0.00163908288455926">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="b"/>
+                      </Node>
+                      <Node id="48" score="0.066722072660923">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-49" score="0.121846180151005">
+                    <True/>
+                    <Node id="-50" score="0.0456944527449431">
+                      <SimplePredicate field="ENERGY" operator="lessThan" value="5750"/>
+                      <Node id="49" score="0.0903673905592698">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="98160"/>
+                      </Node>
+                      <Node id="-51" score="-0.00951837257641118">
+                        <True/>
+                        <Node id="50" score="0.024894757270813">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="10"/>
+                        </Node>
+                        <Node id="51" score="-0.0581920854747295">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-52" score="0.209339649119276">
+                      <True/>
+                      <Node id="52" score="0.0158420782536268">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="2"/>
+                      </Node>
+                      <Node id="-53" score="0.293019817721459">
+                        <True/>
+                        <Node id="53" score="0.138141642014186">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="11050"/>
+                        </Node>
+                        <Node id="54" score="0.0532703336916472">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree9">
+        <True/>
+        <TreeModel modelName="Tree9" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="SEISMIC" usageType="active"/>
+            <MiningField name="SEISMOACOUSTIC" usageType="active"/>
+            <MiningField name="SHIFT" usageType="active"/>
+            <MiningField name="GHAZARD" usageType="active"/>
+            <MiningField name="GENERGY" usageType="active"/>
+            <MiningField name="GPULS" usageType="active"/>
+            <MiningField name="GDENERGY" usageType="active"/>
+            <MiningField name="GDPULS" usageType="active"/>
+            <MiningField name="NBUMPS" usageType="active"/>
+            <MiningField name="ENERGY" usageType="active"/>
+            <MiningField name="MAXENERGY" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response9" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node9" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00263687442330753">
+            <True/>
+            <Node id="-2" score="-0.0219484147308879">
+              <SimplePredicate field="GENERGY" operator="lessThan" value="28510"/>
+              <Node id="-3" score="-0.024543698241071">
+                <SimplePredicate field="GDENERGY" operator="lessThan" value="105.5"/>
+                <Node id="-4" score="-0.0191947555541992">
+                  <SimplePredicate field="GDPULS" operator="lessThan" value="4.5"/>
+                  <Node id="-5" score="-0.0253914940022977">
+                    <SimplePredicate field="GPULS" operator="lessThan" value="380.5"/>
+                    <Node id="-6" score="-0.0290415909247189">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="-5.5"/>
+                      <Node id="-7" score="-0.0322354210747613">
+                        <SimplePredicate field="MAXENERGY" operator="lessThan" value="3500"/>
+                        <Node id="1" score="-0.0477452765308297">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="319"/>
+                        </Node>
+                        <Node id="2" score="-0.0260536590137997">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-8" score="0.0135428287364818">
+                        <True/>
+                        <Node id="3" score="0.0933900888149555">
+                          <SimplePredicate field="ENERGY" operator="lessThan" value="5900"/>
+                        </Node>
+                        <Node id="4" score="-0.0541620552539825">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-9" score="0.00906186132896237">
+                      <True/>
+                      <Node id="5" score="0.0713304720426861">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="-10.5"/>
+                      </Node>
+                      <Node id="-10" score="-0.0350066260858016">
+                        <True/>
+                        <Node id="6" score="-0.0515972538427873">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="12110"/>
+                        </Node>
+                        <Node id="7" score="-0.0522594831206582">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-11" score="0.017641415198644">
+                    <True/>
+                    <Node id="-12" score="0.0936351895332336">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="416.5"/>
+                      <Node id="8" score="0.0456457167863846">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="a"/>
+                      </Node>
+                      <Node id="9" score="0.12990140914917">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-13" score="-0.0115869595454289">
+                      <True/>
+                      <Node id="-14" score="-0.0270064622163773">
+                        <SimplePredicate field="GHAZARD" operator="equal" value="a"/>
+                        <Node id="10" score="-0.0528699642903096">
+                          <SimplePredicate field="GENERGY" operator="lessThan" value="27190"/>
+                        </Node>
+                        <Node id="11" score="0.0446505871686068">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="12" score="0.132027640938759">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-15" score="-0.041687745314378">
+                  <True/>
+                  <Node id="-16" score="-0.039131248084298">
+                    <SimplePredicate field="GDENERGY" operator="lessThan" value="81.5"/>
+                    <Node id="13" score="-0.0532138022509488">
+                      <SimplePredicate field="GDPULS" operator="lessThan" value="6.5"/>
+                    </Node>
+                    <Node id="-17" score="-0.0376050850701711">
+                      <True/>
+                      <Node id="-18" score="-0.0317715566549728">
+                        <SimplePredicate field="GENERGY" operator="lessThan" value="15395"/>
+                        <Node id="14" score="-0.0517077996180608">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="62.5"/>
+                        </Node>
+                        <Node id="15" score="-0.0515487273534139">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-19" score="-0.044229600389125">
+                        <True/>
+                        <Node id="16" score="-0.0527035666675102">
+                          <SimplePredicate field="GPULS" operator="lessThan" value="595.5"/>
+                        </Node>
+                        <Node id="17" score="-0.0519794225692749">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="18" score="-0.0542967005779869">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-20" score="0.0253434263997608">
+                <True/>
+                <Node id="19" score="0.0826749881108602">
+                  <SimplePredicate field="GENERGY" operator="lessThan" value="21200"/>
+                </Node>
+                <Node id="-21" score="-0.064691906883603">
+                  <True/>
+                  <Node id="20" score="-0.0569332614541054">
+                    <SimplePredicate field="GHAZARD" operator="equal" value="b"/>
+                  </Node>
+                  <Node id="21" score="-0.0540206958265866">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-22" score="0.0196357695261637">
+              <True/>
+              <Node id="22" score="0.0847688913345337">
+                <SimplePredicate field="GENERGY" operator="lessThan" value="29525"/>
+              </Node>
+              <Node id="-23" score="0.0162413784581372">
+                <True/>
+                <Node id="-24" score="-0.0304235901151385">
+                  <SimplePredicate field="GPULS" operator="lessThan" value="361"/>
+                  <Node id="-25" score="-0.0482261883906829">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="SEISMOACOUSTIC" operator="isMissing"/>
+                      <SimpleSetPredicate field="SEISMOACOUSTIC" booleanOperator="isIn">
+                        <Array n="2" type="string">"a" "c"</Array>
+                      </SimpleSetPredicate>
+                    </CompoundPredicate>
+                    <Node id="-26" score="-0.0432997388499124">
+                      <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+                      <Node id="-27" score="-0.0401625951131185">
+                        <SimplePredicate field="GPULS" operator="lessThan" value="309.5"/>
+                        <Node id="23" score="-0.0520347164523217">
+                          <SimplePredicate field="GDENERGY" operator="lessThan" value="-5"/>
+                        </Node>
+                        <Node id="24" score="-0.0524519852229527">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="25" score="-0.0533751140941273">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-28" score="-0.0607662363485856">
+                      <True/>
+                      <Node id="26" score="-0.0530261830850081">
+                        <SimplePredicate field="ENERGY" operator="lessThan" value="3850"/>
+                      </Node>
+                      <Node id="27" score="-0.0539773648435419">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-29" score="0.0104176673819037">
+                    <True/>
+                    <Node id="-30" score="0.0551298338433971">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="310"/>
+                      <Node id="-31" score="0.000870849192142487">
+                        <SimplePredicate field="SEISMIC" operator="equal" value="a"/>
+                        <Node id="28" score="-0.0529309697449207">
+                          <SimplePredicate field="SHIFT" operator="equal" value="W"/>
+                        </Node>
+                        <Node id="29" score="0.0159263666719198">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="30" score="0.123409042755763">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="31" score="-0.0571783997795799">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-32" score="0.0272910116086803">
+                  <True/>
+                  <Node id="32" score="0.0894184813779943">
+                    <SimplePredicate field="GPULS" operator="lessThan" value="389.5"/>
+                  </Node>
+                  <Node id="-33" score="0.0218372972388017">
+                    <True/>
+                    <Node id="-34" score="-0.0591693616682483">
+                      <SimplePredicate field="GPULS" operator="lessThan" value="449.5"/>
+                      <Node id="-35" score="-0.0515673279762268">
+                        <SimplePredicate field="NBUMPS" operator="lessThan" value="1.5"/>
+                        <Node id="33" score="-0.0539590368668238">
+                          <SimplePredicate field="SEISMOACOUSTIC" operator="equal" value="b"/>
+                        </Node>
+                        <Node id="34" score="-0.0526878961494991">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="35" score="-0.0546424172141335">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-36" score="0.0277460188024184">
+                      <True/>
+                      <Node id="36" score="0.0793095297283596">
+                        <SimplePredicate field="GDENERGY" operator="lessThan" value="-48"/>
+                      </Node>
+                      <Node id="-37" score="0.0223895993806806">
+                        <True/>
+                        <Node id="37" score="0.0203270167607406">
+                          <SimplePredicate field="GDPULS" operator="lessThan" value="58.5"/>
+                        </Node>
+                        <Node id="38" score="-0.008679580013707">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Final">
+        <True/>
+        <RegressionModel modelName="Final" algorithmName="MART" functionName="classification" normalizationMethod="logit">
+          <MiningSchema>
+            <MiningField name="CLASS" usageType="predicted"/>
+            <MiningField name="Response1" usageType="active"/>
+            <MiningField name="Response2" usageType="active"/>
+            <MiningField name="Response3" usageType="active"/>
+            <MiningField name="Response4" usageType="active"/>
+            <MiningField name="Response5" usageType="active"/>
+            <MiningField name="Response6" usageType="active"/>
+            <MiningField name="Response7" usageType="active"/>
+            <MiningField name="Response8" usageType="active"/>
+            <MiningField name="Response9" usageType="active"/>
+            <!--If an INIT variable is to be used, then uncomment the element below and change the variable name.-->
+            <!--MiningField name='init' usageType='active'-->
+          </MiningSchema>
+          <RegressionTable intercept="0" targetCategory="1">
+            <!--If an INIT variable is used, then uncomment the following element and change the variable name-->
+            <!--NumericPredictor name='init' coefficient='1'-->
+            <NumericPredictor name="Response1" coefficient="2"/>
+            <NumericPredictor name="Response2" coefficient="2"/>
+            <NumericPredictor name="Response3" coefficient="2"/>
+            <NumericPredictor name="Response4" coefficient="2"/>
+            <NumericPredictor name="Response5" coefficient="2"/>
+            <NumericPredictor name="Response6" coefficient="2"/>
+            <NumericPredictor name="Response7" coefficient="2"/>
+            <NumericPredictor name="Response8" coefficient="2"/>
+            <NumericPredictor name="Response9" coefficient="2"/>
+          </RegressionTable>
+          <RegressionTable intercept="0.0" targetCategory="0"/>
+        </RegressionModel>
+      </Segment>
+    </Segmentation>
+  </MiningModel>
+</PMML>
+

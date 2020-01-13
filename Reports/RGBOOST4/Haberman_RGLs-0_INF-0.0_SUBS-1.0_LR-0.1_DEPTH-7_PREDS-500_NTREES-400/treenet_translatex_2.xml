@@ -1,0 +1,1212 @@
+<?xml version="1.0"?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Header description="TreeNet Model">
+    <Application name="SPM" version="8.3.0.002"/>
+    <Timestamp>2020-01-12T00:50:24</Timestamp>
+  </Header>
+  <DataDictionary numberOfFields="4">
+    <DataField name="AGE" optype="continuous" dataType="double"/>
+    <DataField name="OP_YEAR" optype="continuous" dataType="double"/>
+    <DataField name="AXIL_NODES" optype="continuous" dataType="double"/>
+    <DataField name="CLASS" optype="categorical" dataType="integer">
+      <Value value="0" property="valid"/>
+      <Value value="1" property="valid"/>
+    </DataField>
+    <!--If an INIT variable was used to develop this model, then uncomment the following element and change the variable name to the one actually used (and increment numberOfFields).  You will also need to uncomment the appropriate elements in the mining schema and in the final regression.-->
+    <!--DataField name='init' displayName='TreeNet initialization variable' optype='continuous' dataType='double'-->
+  </DataDictionary>
+  <MiningModel modelName="TreeNet_1" functionName="classification" algorithmName="MART">
+    <MiningSchema>
+      <MiningField name="CLASS" usageType="predicted" invalidValueTreatment="asMissing" missingValueTreatment="asIs"/>
+      <MiningField name="AGE" usageType="active" importance="0.753647339757991" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="53"/>
+      <MiningField name="OP_YEAR" usageType="active" importance="0.699278332432883" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="63"/>
+      <MiningField name="AXIL_NODES" usageType="active" importance="1" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="1"/>
+      <!--If an INIT variable was used, then uncomment the following element and set the name appropriately-->
+      <!--MiningField name='init' usageType='active' missingValueReplacement='0'-->
+    </MiningSchema>
+    <Output>
+      <OutputField name="PROB_0" optype="continuous" dataType="double" feature="probability" targetField="CLASS" value="0"/>
+      <OutputField name="PROB_1" optype="continuous" dataType="double" feature="probability" targetField="CLASS" value="1"/>
+      <OutputField name="PREDICTION" optype="categorical" dataType="integer" targetField="CLASS" feature="transformedValue">
+        <Discretize field="PROB_1" dataType="integer" defaultValue="0">
+          <DiscretizeBin binValue="1">
+            <Interval closure="openOpen" leftMargin="0.5"/>
+          </DiscretizeBin>
+        </Discretize>
+      </OutputField>
+    </Output>
+    <Segmentation multipleModelMethod="modelChain">
+      <Segment id="Tree1">
+        <True/>
+        <TreeModel modelName="Tree1" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response1" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node1" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.506907871791295">
+            <True/>
+            <Node id="-2" score="-0.567034772334208">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="-3" score="-0.619295476557134">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                <Node id="-4" score="-0.698141670227051">
+                  <SimplePredicate field="OP_YEAR" operator="lessThan" value="62.5"/>
+                  <Node id="1" score="-0.538485697337559">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="59.5"/>
+                  </Node>
+                  <Node id="-5" score="-0.734680102421687">
+                    <True/>
+                    <Node id="2" score="-0.555361270904541">
+                      <SimplePredicate field="AGE" operator="lessThan" value="49.5"/>
+                    </Node>
+                    <Node id="3" score="-0.575049473689153">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-6" score="-0.557455399457146">
+                  <True/>
+                  <Node id="4" score="-0.489733968462263">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                  </Node>
+                  <Node id="-7" score="-0.639808336893717">
+                    <True/>
+                    <Node id="5" score="-0.518172476026747">
+                      <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                    </Node>
+                    <Node id="6" score="-0.57504944006602">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-8" score="-0.448141670227051">
+                <True/>
+                <Node id="7" score="-0.551781611009078">
+                  <SimplePredicate field="AGE" operator="lessThan" value="45"/>
+                </Node>
+                <Node id="-9" score="-0.359348560201711">
+                  <True/>
+                  <Node id="8" score="-0.447076267666287">
+                    <SimplePredicate field="AXIL_NODES" operator="lessThan" value="4.5"/>
+                  </Node>
+                  <Node id="9" score="-0.505245902321555">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="-0.164445980735447">
+              <True/>
+              <Node id="10" score="-0.388906565579501">
+                <SimplePredicate field="AGE" operator="lessThan" value="52"/>
+              </Node>
+              <Node id="11" score="-0.447076201438904">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree2">
+        <True/>
+        <TreeModel modelName="Tree2" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response2" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node2" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.000530165704813871">
+            <True/>
+            <Node id="-2" score="-0.0544724937613684">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="-3" score="-0.10149242065765">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                <Node id="-4" score="-0.172595202922821">
+                  <SimplePredicate field="OP_YEAR" operator="lessThan" value="62.5"/>
+                  <Node id="1" score="-0.0293427258729935">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="59.5"/>
+                  </Node>
+                  <Node id="-5" score="-0.205642058299138">
+                    <True/>
+                    <Node id="2" score="-0.0458280719243563">
+                      <SimplePredicate field="AGE" operator="lessThan" value="49.5"/>
+                    </Node>
+                    <Node id="3" score="-0.0658302628076994">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-6" score="-0.0457255326065363">
+                  <True/>
+                  <Node id="4" score="0.0152002885228112">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                  </Node>
+                  <Node id="-7" score="-0.11996857325236">
+                    <True/>
+                    <Node id="5" score="-0.0102525105079015">
+                      <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                    </Node>
+                    <Node id="6" score="-0.0658302704493205">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-8" score="0.0524978339672089">
+                <True/>
+                <Node id="7" score="-0.0422817414457148">
+                  <SimplePredicate field="AGE" operator="lessThan" value="45"/>
+                </Node>
+                <Node id="-9" score="0.132403957432714">
+                  <True/>
+                  <Node id="8" score="0.0509077144993676">
+                    <SimplePredicate field="AXIL_NODES" operator="lessThan" value="4.5"/>
+                  </Node>
+                  <Node id="9" score="0.00149334509941665">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="0.306706573652185">
+              <True/>
+              <Node id="10" score="0.0993064208464189">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="19.5"/>
+              </Node>
+              <Node id="11" score="0.0481671988964081">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree3">
+        <True/>
+        <TreeModel modelName="Tree3" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response3" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node3" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.000882676766290293">
+            <True/>
+            <Node id="-2" score="-0.0493377365228784">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="-3" score="-0.0916653622637738">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                <Node id="-4" score="-0.155790066719055">
+                  <SimplePredicate field="OP_YEAR" operator="lessThan" value="62.5"/>
+                  <Node id="1" score="-0.0272432118654251">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="59.5"/>
+                  </Node>
+                  <Node id="-5" score="-0.185690054526696">
+                    <True/>
+                    <Node id="2" score="-0.0433758451388432">
+                      <SimplePredicate field="AGE" operator="lessThan" value="49.5"/>
+                    </Node>
+                    <Node id="3" score="-0.0638774220760052">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-6" score="-0.0413714764164943">
+                  <True/>
+                  <Node id="-7" score="0.0259460095436342">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="66.5"/>
+                    <Node id="4" score="0.0287715792655945">
+                      <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                    </Node>
+                    <Node id="5" score="-0.0258787755782788">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="6" score="-0.0393839180469513">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-8" score="0.0469576179981232">
+                <True/>
+                <Node id="7" score="-0.0398499450900338">
+                  <SimplePredicate field="AGE" operator="lessThan" value="45"/>
+                </Node>
+                <Node id="-9" score="0.118891041854332">
+                  <True/>
+                  <Node id="8" score="0.0438941650920444">
+                    <SimplePredicate field="AXIL_NODES" operator="lessThan" value="4.5"/>
+                  </Node>
+                  <Node id="9" score="0.00134203684600917">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="0.275100479955259">
+              <True/>
+              <Node id="10" score="0.0831247134642168">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="19.5"/>
+              </Node>
+              <Node id="11" score="0.0416951527198156">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree4">
+        <True/>
+        <TreeModel modelName="Tree4" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response4" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node4" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00111018643750773">
+            <True/>
+            <Node id="-2" score="-0.0743453998376827">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="2.5"/>
+              <Node id="-3" score="-0.110764559577493">
+                <SimplePredicate field="AGE" operator="lessThan" value="59.5"/>
+                <Node id="-4" score="-0.0770035149916163">
+                  <SimplePredicate field="AGE" operator="lessThan" value="53.5"/>
+                  <Node id="-5" score="-0.141135364770889">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="63.5"/>
+                    <Node id="1" score="-0.0177320336753672">
+                      <SimplePredicate field="OP_YEAR" operator="lessThan" value="59.5"/>
+                    </Node>
+                    <Node id="2" score="-0.0516853956949143">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="3" score="0.00533259979316166">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="4" score="-0.0655241926511129">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-6" score="0.000700138283498359">
+                <True/>
+                <Node id="5" score="0.0336641006999546">
+                  <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                </Node>
+                <Node id="6" score="-0.0448869824409485">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-7" score="0.13845125234352">
+              <True/>
+              <Node id="-8" score="0.194796024224697">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                <Node id="-9" score="0.286031150817871">
+                  <SimplePredicate field="AGE" operator="lessThan" value="56"/>
+                  <Node id="7" score="0.0279589568575223">
+                    <SimplePredicate field="AGE" operator="lessThan" value="47.5"/>
+                  </Node>
+                  <Node id="8" score="0.102516000087445">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="9" score="0.00730061211756298">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="10" score="-0.00443228068096297">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree5">
+        <True/>
+        <TreeModel modelName="Tree5" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response5" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node5" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00134445310800106">
+            <True/>
+            <Node id="-2" score="-0.042001320205572">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="-3" score="-0.0757152850811298">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                <Node id="-4" score="-0.144083638345042">
+                  <SimplePredicate field="OP_YEAR" operator="lessThan" value="61.5"/>
+                  <Node id="1" score="-0.0246414073875972">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="59.5"/>
+                  </Node>
+                  <Node id="2" score="-0.0618457513697007">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-5" score="-0.0403916319211324">
+                  <True/>
+                  <Node id="-6" score="0.00159429907798767">
+                    <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                    <Node id="3" score="-0.0362919650294564">
+                      <SimplePredicate field="OP_YEAR" operator="lessThan" value="63.5"/>
+                    </Node>
+                    <Node id="-7" score="0.0475695832022305">
+                      <True/>
+                      <Node id="4" score="0.0446126302083333">
+                        <SimplePredicate field="OP_YEAR" operator="lessThan" value="66.5"/>
+                      </Node>
+                      <Node id="5" score="-0.0264246250901903">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="6" score="-0.0361082643270493">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-8" score="0.0346979528665543">
+                <True/>
+                <Node id="7" score="-0.0379602963274175">
+                  <SimplePredicate field="AGE" operator="lessThan" value="45"/>
+                </Node>
+                <Node id="-9" score="0.0975831952588312">
+                  <True/>
+                  <Node id="8" score="0.0376326309310065">
+                    <SimplePredicate field="AXIL_NODES" operator="lessThan" value="4.5"/>
+                  </Node>
+                  <Node id="9" score="-0.00387262519110333">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="0.230222930078921">
+              <True/>
+              <Node id="10" score="0.067750096321106">
+                <SimplePredicate field="AGE" operator="lessThan" value="52"/>
+              </Node>
+              <Node id="11" score="0.0314887687563896">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree6">
+        <True/>
+        <TreeModel modelName="Tree6" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response6" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node6" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00147569111802361">
+            <True/>
+            <Node id="-2" score="-0.0614783929126097">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="2.5"/>
+              <Node id="-3" score="-0.0949744757483987">
+                <SimplePredicate field="AGE" operator="lessThan" value="59.5"/>
+                <Node id="-4" score="-0.0647520929012659">
+                  <SimplePredicate field="AGE" operator="lessThan" value="53.5"/>
+                  <Node id="-5" score="-0.116104036569595">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="63.5"/>
+                    <Node id="1" score="-0.0151741626587781">
+                      <SimplePredicate field="OP_YEAR" operator="lessThan" value="59.5"/>
+                    </Node>
+                    <Node id="2" score="-0.0476050603957403">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="3" score="0.00342893458548046">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="4" score="-0.0635545452435811">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-6" score="0.00754383477297696">
+                <True/>
+                <Node id="5" score="0.0313472383552127">
+                  <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                </Node>
+                <Node id="6" score="-0.0413660287857056">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-7" score="0.112869082756762">
+              <True/>
+              <Node id="-8" score="0.162839314876459">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                <Node id="-9" score="0.244536972045898">
+                  <SimplePredicate field="AGE" operator="lessThan" value="56"/>
+                  <Node id="7" score="0.0220781788229942">
+                    <SimplePredicate field="AGE" operator="lessThan" value="47.5"/>
+                  </Node>
+                  <Node id="8" score="0.0830047680781438">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="9" score="0.00380343172167029">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="10" score="-0.00626841826098306">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree7">
+        <True/>
+        <TreeModel modelName="Tree7" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response7" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node7" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00157195552215948">
+            <True/>
+            <Node id="-2" score="-0.0358074603189949">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="-3" score="-0.0626508587009304">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                <Node id="-4" score="-0.122114012318273">
+                  <SimplePredicate field="OP_YEAR" operator="lessThan" value="61.5"/>
+                  <Node id="1" score="-0.0223676264286041">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="59.5"/>
+                  </Node>
+                  <Node id="2" score="-0.0595973519717946">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-5" score="-0.0319282293319702">
+                  <True/>
+                  <Node id="-6" score="0.00704247057437897">
+                    <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                    <Node id="-7" score="-0.0356282293796539">
+                      <SimplePredicate field="AGE" operator="lessThan" value="52.5"/>
+                      <Node id="3" score="0.00428383455922206">
+                        <SimplePredicate field="OP_YEAR" operator="lessThan" value="64.5"/>
+                      </Node>
+                      <Node id="4" score="-0.0191901046782732">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="5" score="0.0312185660004616">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="6" score="-0.0336836218833923">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-8" score="0.0252612769603729">
+                <True/>
+                <Node id="7" score="-0.0360541695898229">
+                  <SimplePredicate field="AGE" operator="lessThan" value="45"/>
+                </Node>
+                <Node id="-9" score="0.080295258554919">
+                  <True/>
+                  <Node id="8" score="0.0328213075796763">
+                    <SimplePredicate field="AXIL_NODES" operator="lessThan" value="4.5"/>
+                  </Node>
+                  <Node id="9" score="-0.00752407583323392">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="0.19342157115107">
+              <True/>
+              <Node id="10" score="0.056031346321106">
+                <SimplePredicate field="AGE" operator="lessThan" value="52"/>
+              </Node>
+              <Node id="11" score="0.0253574699163437">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree8">
+        <True/>
+        <TreeModel modelName="Tree8" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response8" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node8" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00159005772370797">
+            <True/>
+            <Node id="-2" score="-0.032416689486904">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="1" score="-0.0417984016239643">
+                <SimplePredicate field="AGE" operator="lessThan" value="38.5"/>
+              </Node>
+              <Node id="-3" score="-0.0190926282302193">
+                <True/>
+                <Node id="-4" score="-0.0629729863369104">
+                  <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                  <Node id="-5" score="0.0158403751750787">
+                    <SimplePredicate field="AGE" operator="lessThan" value="51"/>
+                    <Node id="2" score="0.0025189220905304">
+                      <SimplePredicate field="AGE" operator="lessThan" value="44.5"/>
+                    </Node>
+                    <Node id="3" score="0.00659482615689437">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-6" score="-0.108009190786453">
+                    <True/>
+                    <Node id="-7" score="-0.0635670056709876">
+                      <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                      <Node id="4" score="-0.0602642081000588">
+                        <SimplePredicate field="AGE" operator="lessThan" value="59.5"/>
+                      </Node>
+                      <Node id="5" score="0.00214016512036324">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="6" score="-0.0613999888300896">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-8" score="0.0400115251541138">
+                  <True/>
+                  <Node id="-9" score="-0.0103369935138805">
+                    <SimplePredicate field="AGE" operator="lessThan" value="60"/>
+                    <Node id="7" score="-0.033501148223877">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="2.5"/>
+                    </Node>
+                    <Node id="8" score="0.0188849523663521">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="9" score="0.0472509463628133">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="0.173987720323646">
+              <True/>
+              <Node id="10" score="0.0506181608546864">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="19.5"/>
+              </Node>
+              <Node id="11" score="0.0220704227685928">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree9">
+        <True/>
+        <TreeModel modelName="Tree9" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response9" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node9" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.0016436344617373">
+            <True/>
+            <Node id="-2" score="-0.0294178169192249">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="1" score="-0.0397427119314671">
+                <SimplePredicate field="AGE" operator="lessThan" value="38.5"/>
+              </Node>
+              <Node id="-3" score="-0.0174145760743514">
+                <True/>
+                <Node id="-4" score="-0.0569519996643066">
+                  <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                  <Node id="-5" score="-0.0213002930296228">
+                    <SimplePredicate field="AGE" operator="lessThan" value="62.5"/>
+                    <Node id="2" score="-0.0386730879545212">
+                      <SimplePredicate field="OP_YEAR" operator="lessThan" value="61.5"/>
+                    </Node>
+                    <Node id="-6" score="0.0232670980115091">
+                      <True/>
+                      <Node id="3" score="0.0239988320014056">
+                        <SimplePredicate field="AGE" operator="lessThan" value="51"/>
+                      </Node>
+                      <Node id="4" score="-0.019010066986084">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="5" score="-0.0466615306703668">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-7" score="0.0358399128427311">
+                  <True/>
+                  <Node id="-8" score="-0.00942125352653297">
+                    <SimplePredicate field="AGE" operator="lessThan" value="60"/>
+                    <Node id="6" score="-0.0312617105596206">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="2.5"/>
+                    </Node>
+                    <Node id="7" score="0.0167716920375824">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="8" score="0.0410653377572695">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-9" score="0.156548448230909">
+              <True/>
+              <Node id="9" score="0.0460269071839072">
+                <SimplePredicate field="AGE" operator="lessThan" value="52"/>
+              </Node>
+              <Node id="10" score="0.0191351088384787">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree10">
+        <True/>
+        <TreeModel modelName="Tree10" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response10" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node10" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00164590814670959">
+            <True/>
+            <Node id="-2" score="-0.0266703758530944">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="1" score="-0.0377618335187435">
+                <SimplePredicate field="AGE" operator="lessThan" value="38.5"/>
+              </Node>
+              <Node id="-3" score="-0.0158540331799051">
+                <True/>
+                <Node id="-4" score="-0.0514736211661136">
+                  <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                  <Node id="-5" score="-0.019316073427809">
+                    <SimplePredicate field="AGE" operator="lessThan" value="62.5"/>
+                    <Node id="2" score="-0.036705706268549">
+                      <SimplePredicate field="OP_YEAR" operator="lessThan" value="61.5"/>
+                    </Node>
+                    <Node id="-6" score="0.0208563016306969">
+                      <True/>
+                      <Node id="3" score="0.0211076929288752">
+                        <SimplePredicate field="AGE" operator="lessThan" value="51"/>
+                      </Node>
+                      <Node id="4" score="-0.0175037341458457">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="5" score="-0.0445265864071093">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-7" score="0.0321233734792593">
+                  <True/>
+                  <Node id="-8" score="-0.00857951512207856">
+                    <SimplePredicate field="AGE" operator="lessThan" value="60"/>
+                    <Node id="6" score="-0.0291432019542245">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="2.5"/>
+                    </Node>
+                    <Node id="7" score="0.0149249672889709">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="8" score="0.0359674046436946">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-9" score="0.140884762224944">
+              <True/>
+              <Node id="9" score="0.0420075086030093">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="19.5"/>
+              </Node>
+              <Node id="10" score="0.0166939807434877">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree11">
+        <True/>
+        <TreeModel modelName="Tree11" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response11" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node11" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.001621022239908">
+            <True/>
+            <Node id="-2" score="-0.0241695851770066">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="-3" score="-0.00567135623857087">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="66.5"/>
+                <Node id="-4" score="-0.0863387761292634">
+                  <SimplePredicate field="AGE" operator="lessThan" value="43.5"/>
+                  <Node id="1" score="-0.00565379957358042">
+                    <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                  </Node>
+                  <Node id="2" score="-0.0609335750341415">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-5" score="0.0233689149220784">
+                  <True/>
+                  <Node id="-6" score="-0.0318046637943813">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="62.5"/>
+                    <Node id="-7" score="-0.0825969597388958">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                      <Node id="3" score="-0.0256595437725385">
+                        <SimplePredicate field="AGE" operator="lessThan" value="53.5"/>
+                      </Node>
+                      <Node id="4" score="-0.0371125200215508">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="5" score="0.0176477776123927">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-8" score="0.0935898332884817">
+                    <True/>
+                    <Node id="6" score="0.045201430718104">
+                      <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                    </Node>
+                    <Node id="7" score="-0.00704725136359533">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-9" score="-0.0892323214432289">
+                <True/>
+                <Node id="8" score="0.000320693633208672">
+                  <SimplePredicate field="AGE" operator="lessThan" value="48.5"/>
+                </Node>
+                <Node id="9" score="-0.0481774806976318">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="0.126807751862899">
+              <True/>
+              <Node id="10" score="0.0384874127127907">
+                <SimplePredicate field="AGE" operator="lessThan" value="52"/>
+              </Node>
+              <Node id="11" score="0.0144725541273753">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree12">
+        <True/>
+        <TreeModel modelName="Tree12" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response12" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node12" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00162582776763222">
+            <True/>
+            <Node id="-2" score="-0.0219528984477502">
+              <SimplePredicate field="AXIL_NODES" operator="lessThan" value="8.5"/>
+              <Node id="-3" score="-0.00529679130105411">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="66.5"/>
+                <Node id="1" score="-0.0306149531494487">
+                  <SimplePredicate field="AGE" operator="lessThan" value="42.5"/>
+                </Node>
+                <Node id="-4" score="0.0172592267394066">
+                  <True/>
+                  <Node id="-5" score="-0.0311523509580036">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="62.5"/>
+                    <Node id="-6" score="-0.0764231046040853">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                      <Node id="2" score="-0.0206406590613452">
+                        <SimplePredicate field="AGE" operator="lessThan" value="52.5"/>
+                      </Node>
+                      <Node id="3" score="-0.0376311007298921">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="4" score="0.015751729790981">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-7" score="0.0735213305499103">
+                    <True/>
+                    <Node id="-8" score="0.12703197479248">
+                      <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                      <Node id="5" score="0.0161516772849219">
+                        <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                      </Node>
+                      <Node id="6" score="0.0466310761191628">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="7" score="-0.0122947668035825">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-9" score="-0.0805364477223363">
+                <True/>
+                <Node id="8" score="0.000288530582717309">
+                  <SimplePredicate field="AGE" operator="lessThan" value="48.5"/>
+                </Node>
+                <Node id="9" score="-0.0458039676441866">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-10" score="0.114150099132372">
+              <True/>
+              <Node id="10" score="0.0353371609341014">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="19.5"/>
+              </Node>
+              <Node id="11" score="0.0126157874862353">
+                <True/>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree13">
+        <True/>
+        <TreeModel modelName="Tree13" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response13" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node13" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.001583323463217">
+            <True/>
+            <Node id="-2" score="-0.0716969898768834">
+              <SimplePredicate field="AGE" operator="lessThan" value="43.5"/>
+              <Node id="1" score="-0.050585218838283">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="63.5"/>
+              </Node>
+              <Node id="2" score="0.00753161896552358">
+                <True/>
+              </Node>
+            </Node>
+            <Node id="-3" score="0.0190383426281584">
+              <True/>
+              <Node id="-4" score="0.073270285571063">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                <Node id="-5" score="0.0302160426751891">
+                  <SimplePredicate field="AXIL_NODES" operator="lessThan" value="9.5"/>
+                  <Node id="-6" score="-0.0199648107801165">
+                    <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                    <Node id="3" score="-0.0254512757062912">
+                      <SimplePredicate field="AGE" operator="lessThan" value="59.5"/>
+                    </Node>
+                    <Node id="4" score="0.012241542339325">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-7" score="0.0851013511419296">
+                    <True/>
+                    <Node id="5" score="0.0381073298908415">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="5.5"/>
+                    </Node>
+                    <Node id="6" score="-0.00927424498579719">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="7" score="0.0578380652836391">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-8" score="-0.0965613314979955">
+                <True/>
+                <Node id="-9" score="-0.0762168264389038">
+                  <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                  <Node id="8" score="-0.0067163502628153">
+                    <SimplePredicate field="AGE" operator="lessThan" value="51"/>
+                  </Node>
+                  <Node id="9" score="-0.0314777131591524">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="10" score="-0.0597266600682185">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree14">
+        <True/>
+        <TreeModel modelName="Tree14" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response14" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node14" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00157353814159121">
+            <True/>
+            <Node id="-2" score="-0.0647634710584368">
+              <SimplePredicate field="AGE" operator="lessThan" value="43.5"/>
+              <Node id="1" score="0.00479057679573695">
+                <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+              </Node>
+              <Node id="2" score="-0.0518030243761399">
+                <True/>
+              </Node>
+            </Node>
+            <Node id="-3" score="0.0170117366213758">
+              <True/>
+              <Node id="-4" score="0.0658802691801095">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                <Node id="-5" score="0.027109409446147">
+                  <SimplePredicate field="AXIL_NODES" operator="lessThan" value="9.5"/>
+                  <Node id="-6" score="-0.00891801443966952">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="62.5"/>
+                    <Node id="-7" score="-0.0666225038725754">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                      <Node id="3" score="-0.0221206992864609">
+                        <SimplePredicate field="AGE" operator="lessThan" value="53.5"/>
+                      </Node>
+                      <Node id="4" score="-0.0333742464289946">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="5" score="0.0216351191202799">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-8" score="0.096031437749448">
+                    <True/>
+                    <Node id="6" score="0.0103368026514848">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                    </Node>
+                    <Node id="7" score="0.0331356904723428">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="8" score="0.0522744315011161">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-9" score="-0.087155398569609">
+                <True/>
+                <Node id="-10" score="-0.0686881685256958">
+                  <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                  <Node id="9" score="-0.00607684390111403">
+                    <SimplePredicate field="AGE" operator="lessThan" value="51"/>
+                  </Node>
+                  <Node id="10" score="-0.0291926839521953">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="11" score="-0.0587429908605722">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree15">
+        <True/>
+        <TreeModel modelName="Tree15" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="AGE" usageType="active"/>
+            <MiningField name="OP_YEAR" usageType="active"/>
+            <MiningField name="AXIL_NODES" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response15" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node15" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00154233317483555">
+            <True/>
+            <Node id="-2" score="-0.0584691320146833">
+              <SimplePredicate field="AGE" operator="lessThan" value="43.5"/>
+              <Node id="1" score="-0.0469447005362738">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="63.5"/>
+              </Node>
+              <Node id="2" score="0.00847083330154419">
+                <True/>
+              </Node>
+            </Node>
+            <Node id="-3" score="0.015200843330191">
+              <True/>
+              <Node id="-4" score="0.059237762733742">
+                <SimplePredicate field="OP_YEAR" operator="lessThan" value="65.5"/>
+                <Node id="-5" score="0.0243115816543351">
+                  <SimplePredicate field="AXIL_NODES" operator="lessThan" value="9.5"/>
+                  <Node id="-6" score="-0.00812789662317796">
+                    <SimplePredicate field="OP_YEAR" operator="lessThan" value="62.5"/>
+                    <Node id="-7" score="-0.060100271784026">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="1.5"/>
+                      <Node id="3" score="-0.02059539159139">
+                        <SimplePredicate field="AGE" operator="lessThan" value="53.5"/>
+                      </Node>
+                      <Node id="4" score="-0.0315878461388981">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="5" score="0.0193643649419149">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-8" score="0.0863697114198104">
+                    <True/>
+                    <Node id="6" score="0.00922230072319508">
+                      <SimplePredicate field="AXIL_NODES" operator="lessThan" value="0.5"/>
+                    </Node>
+                    <Node id="7" score="0.0294163850220767">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="8" score="0.0474860753331866">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-9" score="-0.0786673269773784">
+                <True/>
+                <Node id="-10" score="-0.0619006776809692">
+                  <SimplePredicate field="AGE" operator="lessThan" value="61.5"/>
+                  <Node id="9" score="-0.00549578023227778">
+                    <SimplePredicate field="AGE" operator="lessThan" value="51"/>
+                  </Node>
+                  <Node id="10" score="-0.0270495414733887">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="11" score="-0.0578676462173462">
+                  <True/>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Final">
+        <True/>
+        <RegressionModel modelName="Final" algorithmName="MART" functionName="classification" normalizationMethod="logit">
+          <MiningSchema>
+            <MiningField name="CLASS" usageType="predicted"/>
+            <MiningField name="Response1" usageType="active"/>
+            <MiningField name="Response2" usageType="active"/>
+            <MiningField name="Response3" usageType="active"/>
+            <MiningField name="Response4" usageType="active"/>
+            <MiningField name="Response5" usageType="active"/>
+            <MiningField name="Response6" usageType="active"/>
+            <MiningField name="Response7" usageType="active"/>
+            <MiningField name="Response8" usageType="active"/>
+            <MiningField name="Response9" usageType="active"/>
+            <MiningField name="Response10" usageType="active"/>
+            <MiningField name="Response11" usageType="active"/>
+            <MiningField name="Response12" usageType="active"/>
+            <MiningField name="Response13" usageType="active"/>
+            <MiningField name="Response14" usageType="active"/>
+            <MiningField name="Response15" usageType="active"/>
+            <!--If an INIT variable is to be used, then uncomment the element below and change the variable name.-->
+            <!--MiningField name='init' usageType='active'-->
+          </MiningSchema>
+          <RegressionTable intercept="0" targetCategory="1">
+            <!--If an INIT variable is used, then uncomment the following element and change the variable name-->
+            <!--NumericPredictor name='init' coefficient='1'-->
+            <NumericPredictor name="Response1" coefficient="2"/>
+            <NumericPredictor name="Response2" coefficient="2"/>
+            <NumericPredictor name="Response3" coefficient="2"/>
+            <NumericPredictor name="Response4" coefficient="2"/>
+            <NumericPredictor name="Response5" coefficient="2"/>
+            <NumericPredictor name="Response6" coefficient="2"/>
+            <NumericPredictor name="Response7" coefficient="2"/>
+            <NumericPredictor name="Response8" coefficient="2"/>
+            <NumericPredictor name="Response9" coefficient="2"/>
+            <NumericPredictor name="Response10" coefficient="2"/>
+            <NumericPredictor name="Response11" coefficient="2"/>
+            <NumericPredictor name="Response12" coefficient="2"/>
+            <NumericPredictor name="Response13" coefficient="2"/>
+            <NumericPredictor name="Response14" coefficient="2"/>
+            <NumericPredictor name="Response15" coefficient="2"/>
+          </RegressionTable>
+          <RegressionTable intercept="0.0" targetCategory="0"/>
+        </RegressionModel>
+      </Segment>
+    </Segmentation>
+  </MiningModel>
+</PMML>
+
