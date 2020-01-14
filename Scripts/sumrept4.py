@@ -7,7 +7,7 @@ fields = ["Name", "N Replications", "N Features", "N Learn", "N Holdout",
           "Avg ROC (TN)", "Avg ROC (XGB)", "StdDev ROC (TN)", "Avg Delta_ROC", "Min Delta ROC",
           "Max Delta ROC", "StdDev Delta ROC"]
 SPREAD = "../Datasets4.xlsx"
-OUTFILE = "tn_vs_xgb_sumrept4.xlsx"
+OUTFILE = "../Reports/tn_vs_xgb_sumrept4.xlsx"
 REPTDIR = "../Reports/RGBOOST4"
 DATADIR = "../Data/Classification"
 SLASH = "/"
