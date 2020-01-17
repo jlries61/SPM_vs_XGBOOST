@@ -52,6 +52,7 @@ for i_ds in datasets_nums:
     del init_train
     if len(xlist) > 0:
         data_full.drop(columns = xlist, inplace = True)
+    anycat = len(cats) > 0 or funcs.df_anyobj(data_full)
 
     field_names = data_full.columns
     xpin = tf.mktemp(suffix=ext)
@@ -73,7 +74,7 @@ for i_ds in datasets_nums:
     os.remove(xpout)
 
     xdata_full = pd.DataFrame()
-    if len(cats) > 0 or funcs.df_anyobj(data_full):
+    if anycat:
         xdata_full = funcs.expandClass(data_full[field_names], cats)
     for j in range(nsamp):
         strj = str(j+1)
