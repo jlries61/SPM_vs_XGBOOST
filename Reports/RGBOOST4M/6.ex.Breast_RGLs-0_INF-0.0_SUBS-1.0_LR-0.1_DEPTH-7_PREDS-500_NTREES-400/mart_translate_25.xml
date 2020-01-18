@@ -1,0 +1,1456 @@
+<?xml version="1.0"?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Header description="TreeNet Model">
+    <Application name="SPM" version="8.3.0.002"/>
+    <Timestamp>2020-01-18T00:16:09</Timestamp>
+  </Header>
+  <DataDictionary numberOfFields="5">
+    <DataField name="ENTAGE" optype="continuous" dataType="double"/>
+    <DataField name="FOLLOW" optype="continuous" dataType="double"/>
+    <DataField name="PD" optype="continuous" dataType="double"/>
+    <DataField name="FATE" optype="categorical" dataType="integer">
+      <Value value="0" property="valid"/>
+      <Value value="1" property="valid"/>
+    </DataField>
+    <DataField name="FH" optype="continuous" dataType="double"/>
+    <!--If an INIT variable was used to develop this model, then uncomment the following element and change the variable name to the one actually used (and increment numberOfFields).  You will also need to uncomment the appropriate elements in the mining schema and in the final regression.-->
+    <!--DataField name='init' displayName='TreeNet initialization variable' optype='continuous' dataType='double'-->
+  </DataDictionary>
+  <MiningModel modelName="TreeNet_1" functionName="classification" algorithmName="MART">
+    <MiningSchema>
+      <MiningField name="FATE" usageType="predicted" invalidValueTreatment="asMissing" missingValueTreatment="asIs"/>
+      <MiningField name="ENTAGE" usageType="active" importance="0.5512494800369" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="42"/>
+      <MiningField name="FOLLOW" usageType="active" importance="1" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="16.68446"/>
+      <MiningField name="PD" usageType="active" importance="0.476002879320301" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="1"/>
+      <MiningField name="FH" usageType="active" importance="0.190476168222158" invalidValueTreatment="asMissing" missingValueTreatment="asMedian" missingValueReplacement="0"/>
+      <!--If an INIT variable was used, then uncomment the following element and set the name appropriately-->
+      <!--MiningField name='init' usageType='active' missingValueReplacement='0'-->
+    </MiningSchema>
+    <Output>
+      <OutputField name="PROB_0" optype="continuous" dataType="double" feature="probability" targetField="FATE" value="0"/>
+      <OutputField name="PROB_1" optype="continuous" dataType="double" feature="probability" targetField="FATE" value="1"/>
+      <OutputField name="PREDICTION" optype="categorical" dataType="integer" targetField="FATE" feature="transformedValue">
+        <Discretize field="PROB_1" dataType="integer" defaultValue="0">
+          <DiscretizeBin binValue="1">
+            <Interval closure="openOpen" leftMargin="0.5"/>
+          </DiscretizeBin>
+        </Discretize>
+      </OutputField>
+    </Output>
+    <Segmentation multipleModelMethod="modelChain">
+      <Segment id="Tree1">
+        <True/>
+        <TreeModel modelName="Tree1" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="ENTAGE" usageType="active"/>
+            <MiningField name="FOLLOW" usageType="active"/>
+            <MiningField name="PD" usageType="active"/>
+            <MiningField name="FH" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response1" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node1" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-1.57410037430955">
+            <True/>
+            <Node id="-2" score="-1.1165475669814">
+              <SimplePredicate field="FOLLOW" operator="lessThan" value="10.18891"/>
+              <Node id="-3" score="-1.48975817362467">
+                <SimplePredicate field="PD" operator="lessThan" value="0.5"/>
+                <Node id="-4" score="-1.36230704363655">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="44.5"/>
+                  <Node id="1" score="-1.5595703125">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="2" score="-1.28841972351074">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="3" score="-1.62624696584848">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-5" score="-0.899143330101828">
+                <True/>
+                <Node id="-6" score="-0.784630017402845">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="49.5"/>
+                  <Node id="4" score="-1.41510502497355">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="34.5"/>
+                  </Node>
+                  <Node id="-7" score="-0.686727870594371">
+                    <True/>
+                    <Node id="-8" score="-0.502578808711125">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="4.384668"/>
+                      <Node id="5" score="-1.05040515552868">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="2.425736"/>
+                      </Node>
+                      <Node id="6" score="-0.781679026285807">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-9" score="-0.806424903869629">
+                      <True/>
+                      <Node id="7" score="-1.28074177828702">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="6.131417"/>
+                      </Node>
+                      <Node id="-10" score="-0.690907708529768">
+                        <True/>
+                        <Node id="8" score="-0.955560459810145">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="43.5"/>
+                        </Node>
+                        <Node id="9" score="-1.09839193026225">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-11" score="-1.2564249420166">
+                  <True/>
+                  <Node id="10" score="-1.23644638061523">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="6.079398"/>
+                  </Node>
+                  <Node id="11" score="-1.52067597707113">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-12" score="-1.62418838408747">
+              <True/>
+              <Node id="-13" score="-1.54947307403075">
+                <SimplePredicate field="FOLLOW" operator="lessThan" value="12.92129"/>
+                <Node id="-14" score="-1.57502941752589">
+                  <SimplePredicate field="FH" operator="lessThan" value="0.5"/>
+                  <Node id="-15" score="-1.59313375738603">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="59.5"/>
+                    <Node id="12" score="-1.62624696584848">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                    </Node>
+                    <Node id="-16" score="-1.56208527762935">
+                      <True/>
+                      <Node id="13" score="-1.46789026260376">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="42.5"/>
+                      </Node>
+                      <Node id="-17" score="-1.58975813123915">
+                        <True/>
+                        <Node id="14" score="-1.53987069563432">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="11.80151"/>
+                        </Node>
+                        <Node id="15" score="-1.62624690843665">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="16" score="-1.44526808602469">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="17" score="-1.3728764851888">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-18" score="-1.63491957235263">
+                <True/>
+                <Node id="-19" score="-1.63899991680784">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="47.5"/>
+                  <Node id="-20" score="-1.62926023318124">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                    <Node id="-21" score="-1.6099133158839">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="18.03148"/>
+                      <Node id="-22" score="-1.61593899746173">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="17.82478"/>
+                        <Node id="18" score="-1.59425569784762">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="16.75838"/>
+                        </Node>
+                        <Node id="19" score="-1.62624686104911">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="20" score="-1.5110785744407">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-23" score="-1.64434021549282">
+                      <True/>
+                      <Node id="21" score="-1.62624681260851">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="21.9384"/>
+                      </Node>
+                      <Node id="-24" score="-1.62993475301376">
+                        <True/>
+                        <Node id="22" score="-1.52067597707113">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="22.10404"/>
+                        </Node>
+                        <Node id="23" score="-1.61713283182048">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-25" score="-1.65192035297016">
+                    <True/>
+                    <Node id="24" score="-1.6262469182249">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="20.42574"/>
+                    </Node>
+                    <Node id="-26" score="-1.64203638310055">
+                      <True/>
+                      <Node id="25" score="-1.5110785744407">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="20.74333"/>
+                      </Node>
+                      <Node id="26" score="-1.62624680995941">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-27" score="-1.61925010255721">
+                  <True/>
+                  <Node id="-28" score="-1.63110840873879">
+                    <SimplePredicate field="PD" operator="lessThan" value="1.5"/>
+                    <Node id="-29" score="-1.64459065995978">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="20"/>
+                      <Node id="27" score="-1.62624684580556">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="62"/>
+                      </Node>
+                      <Node id="-30" score="-1.57950181227464">
+                        <True/>
+                        <Node id="28" score="-1.5110785744407">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="65.5"/>
+                        </Node>
+                        <Node id="29" score="-1.62624689737956">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-31" score="-1.59760127348058">
+                      <True/>
+                      <Node id="30" score="-1.5110785744407">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="20.81314"/>
+                      </Node>
+                      <Node id="-32" score="-1.62133722137987">
+                        <True/>
+                        <Node id="31" score="-1.62624687618679">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="51.5"/>
+                        </Node>
+                        <Node id="32" score="-1.56592069353376">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-33" score="-1.53142488002777">
+                    <True/>
+                    <Node id="33" score="-1.46789026260376">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="50.5"/>
+                    </Node>
+                    <Node id="34" score="-1.62624680995941">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree2">
+        <True/>
+        <TreeModel modelName="Tree2" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="ENTAGE" usageType="active"/>
+            <MiningField name="FOLLOW" usageType="active"/>
+            <MiningField name="PD" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response2" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node2" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00353567132649641">
+            <True/>
+            <Node id="-2" score="0.379941717978635">
+              <SimplePredicate field="FOLLOW" operator="lessThan" value="10.18891"/>
+              <Node id="-3" score="0.072266697883606">
+                <SimplePredicate field="PD" operator="lessThan" value="0.5"/>
+                <Node id="-4" score="0.184480751261992">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="44.5"/>
+                  <Node id="1" score="0.0127142103094804">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="2" score="0.149286047617594">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="3" score="-0.0519338846206665">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-5" score="0.559169880394797">
+                <True/>
+                <Node id="-6" score="0.667717933654785">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="47.5"/>
+                  <Node id="4" score="0.105450143416723">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="34.5"/>
+                  </Node>
+                  <Node id="-7" score="0.756880187988281">
+                    <True/>
+                    <Node id="-8" score="0.619514644145966">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="5.622177"/>
+                      <Node id="5" score="0.170157086849213">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="3.894593"/>
+                      </Node>
+                      <Node id="6" score="0.0784712384144465">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-9" score="0.913869380950928">
+                      <True/>
+                      <Node id="7" score="0.322248776753743">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="7.039014"/>
+                      </Node>
+                      <Node id="8" score="0.156661882996559">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-10" score="0.307058303586898">
+                  <True/>
+                  <Node id="9" score="0.183177667505601">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="6.639288"/>
+                  </Node>
+                  <Node id="10" score="0.00904845552785056">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-11" score="-0.0455147286563051">
+              <True/>
+              <Node id="-12" score="0.0210552712812781">
+                <SimplePredicate field="FOLLOW" operator="lessThan" value="12.92129"/>
+                <Node id="-13" score="-0.0463668163691726">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="45.5"/>
+                  <Node id="11" score="0.0656342343850569">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="10.56263"/>
+                  </Node>
+                  <Node id="-14" score="-0.0632905960083008">
+                    <True/>
+                    <Node id="-15" score="-0.0859127694910223">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="12.36277"/>
+                      <Node id="-16" score="-0.0785493990954231">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                        <Node id="12" score="-0.0522750467061996">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="11.64134"/>
+                        </Node>
+                        <Node id="13" score="-0.0519338813092974">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-17" score="-0.0937363505363464">
+                        <True/>
+                        <Node id="14" score="-0.0526544614271684">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="42.5"/>
+                        </Node>
+                        <Node id="15" score="-0.0524124588285174">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-18" score="-0.0135218063990275">
+                      <True/>
+                      <Node id="16" score="0.0615782358429649">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="12.6037"/>
+                      </Node>
+                      <Node id="17" score="-0.0520835079644856">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-19" score="0.111232316493988">
+                  <True/>
+                  <Node id="-20" score="-0.0355388837702134">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="11.68104"/>
+                    <Node id="18" score="0.0412169968088468">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="48.5"/>
+                    </Node>
+                    <Node id="-21" score="-0.094909126108343">
+                      <True/>
+                      <Node id="19" score="-0.0522985620932146">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="55.5"/>
+                      </Node>
+                      <Node id="20" score="-0.0527099479328502">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-22" score="0.219715367192807">
+                    <True/>
+                    <Node id="21" score="0.403166164051403">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="11.90007"/>
+                    </Node>
+                    <Node id="-23" score="0.0864009925297328">
+                      <True/>
+                      <Node id="-24" score="-0.00204248974720637">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="12.71458"/>
+                        <Node id="22" score="0.0624047788706693">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="12.30938"/>
+                        </Node>
+                        <Node id="23" score="-0.0523769305302547">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="24" score="0.173343907703053">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-25" score="-0.0550758549328407">
+                <True/>
+                <Node id="-26" score="-0.0587188595146777">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="47.5"/>
+                  <Node id="-27" score="-0.0475347172861864">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="38.5"/>
+                    <Node id="-28" score="-0.0299244861976773">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="18.03148"/>
+                      <Node id="-29" score="-0.0616568306036163">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="15.96852"/>
+                        <Node id="25" score="-0.0520616361073085">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="35.5"/>
+                        </Node>
+                        <Node id="26" score="-0.0221826488321478">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-30" score="0.010269816716512">
+                        <True/>
+                        <Node id="27" score="0.0518259845281902">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="32.5"/>
+                        </Node>
+                        <Node id="28" score="-0.0264616425220783">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-31" score="-0.0608402252197266">
+                      <True/>
+                      <Node id="-32" score="-0.0675521032047658">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                        <Node id="29" score="-0.0311534188010476">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="27.5"/>
+                        </Node>
+                        <Node id="30" score="-0.0519686377509523">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-33" score="0.0112394846003989">
+                        <True/>
+                        <Node id="31" score="-0.0519338846206665">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="21.3744"/>
+                        </Node>
+                        <Node id="32" score="0.0706862536343661">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-34" score="-0.0682023718873162">
+                    <True/>
+                    <Node id="-35" score="0.00807090103626251">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="13.44969"/>
+                      <Node id="33" score="-0.0519451399644216">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="13.14031"/>
+                      </Node>
+                      <Node id="34" score="0.0625138282775879">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-36" score="-0.0716239786593714">
+                      <True/>
+                      <Node id="-37" score="-0.0755877162134925">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="44.5"/>
+                        <Node id="35" score="-0.0520038647694631">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                        </Node>
+                        <Node id="36" score="-0.0519497138747841">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-38" score="-0.0644851005514255">
+                        <True/>
+                        <Node id="37" score="-0.0292654369698196">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="45.5"/>
+                        </Node>
+                        <Node id="38" score="-0.0519480851980356">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-39" score="-0.0410861791731257">
+                  <True/>
+                  <Node id="-40" score="0.0372540507997785">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="48.5"/>
+                    <Node id="39" score="-0.0519863466421763">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="18.23409"/>
+                    </Node>
+                    <Node id="40" score="0.104599062134238">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="-41" score="-0.0528037364666279">
+                    <True/>
+                    <Node id="-42" score="-0.0594708796398181">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="24.28611"/>
+                      <Node id="-43" score="-0.0665299063697856">
+                        <SimplePredicate field="PD" operator="lessThan" value="1.5"/>
+                        <Node id="41" score="-0.0519919305477502">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="62"/>
+                        </Node>
+                        <Node id="42" score="-0.00692199010934148">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-44" score="-0.00870017936596504">
+                        <True/>
+                        <Node id="43" score="-0.0522732416788737">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="18.23819"/>
+                        </Node>
+                        <Node id="44" score="0.0577068870717829">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="45" score="0.00960569296564375">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree3">
+        <True/>
+        <TreeModel modelName="Tree3" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="ENTAGE" usageType="active"/>
+            <MiningField name="FOLLOW" usageType="active"/>
+            <MiningField name="PD" usageType="active"/>
+            <MiningField name="FH" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response3" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node3" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00433480508679628">
+            <True/>
+            <Node id="-2" score="0.327180115103024">
+              <SimplePredicate field="FOLLOW" operator="lessThan" value="10.45175"/>
+              <Node id="-3" score="0.0844391286373138">
+                <SimplePredicate field="PD" operator="lessThan" value="0.5"/>
+                <Node id="-4" score="0.195974865475216">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="44.5"/>
+                  <Node id="1" score="0.00807168260216713">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="2" score="0.127235300400678">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-5" score="-0.0684061491930926">
+                  <True/>
+                  <Node id="3" score="-0.0517430938780308">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="7.594798"/>
+                  </Node>
+                  <Node id="4" score="-0.0518355640498075">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-6" score="0.472370967686733">
+                <True/>
+                <Node id="-7" score="0.550972550003617">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="49.5"/>
+                  <Node id="5" score="0.0771943595674303">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="-8" score="0.635447063143291">
+                    <True/>
+                    <Node id="-9" score="0.761264371871948">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="6.962355"/>
+                      <Node id="-10" score="0.624101441482018">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="5.115674"/>
+                        <Node id="6" score="0.164121114290678">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="2.95551"/>
+                        </Node>
+                        <Node id="7" score="0.071337565779686">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="8" score="0.207384087822654">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-11" score="0.416634310846743">
+                      <True/>
+                      <Node id="9" score="0.0339649692177773">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="8.915812"/>
+                      </Node>
+                      <Node id="10" score="0.165058341893283">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-12" score="0.22749688075139">
+                  <True/>
+                  <Node id="11" score="0.125609429677327">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="6.639288"/>
+                  </Node>
+                  <Node id="12" score="-0.0524032657796686">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-13" score="-0.0426123552753827">
+              <True/>
+              <Node id="-14" score="0.0103266325742839">
+                <SimplePredicate field="FOLLOW" operator="lessThan" value="12.92129"/>
+                <Node id="-15" score="-0.0142312253393778">
+                  <SimplePredicate field="FH" operator="lessThan" value="0.5"/>
+                  <Node id="-16" score="-0.0322440696867886">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="59.5"/>
+                    <Node id="-17" score="-0.0808263763052518">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="11.69336"/>
+                      <Node id="13" score="-0.0518844943297537">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                      </Node>
+                      <Node id="-18" score="-0.0848889010293143">
+                        <True/>
+                        <Node id="14" score="-0.0522982252055201">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="48.5"/>
+                        </Node>
+                        <Node id="15" score="-0.0520700216293335">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-19" score="0.000683940119213528">
+                      <True/>
+                      <Node id="16" score="0.154951171441512">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="11.83847"/>
+                      </Node>
+                      <Node id="-20" score="-0.0554508257515823">
+                        <True/>
+                        <Node id="17" score="-0.00856143049895763">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="41.5"/>
+                        </Node>
+                        <Node id="18" score="-0.0523957039447541">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="19" score="0.0922461381325355">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="20" score="0.122619406382243">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-21" score="-0.0498904508013513">
+                <True/>
+                <Node id="-22" score="-0.0479101840164108">
+                  <SimplePredicate field="FOLLOW" operator="lessThan" value="25.45243"/>
+                  <Node id="-23" score="-0.0493793471480179">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="25.21424"/>
+                    <Node id="-24" score="-0.0536923621110855">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="47.5"/>
+                      <Node id="-25" score="-0.0408946639613101">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                        <Node id="21" score="-0.0124412373054859">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="18.03148"/>
+                        </Node>
+                        <Node id="22" score="-0.0446003033564641">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-26" score="-0.0623456133642231">
+                        <True/>
+                        <Node id="23" score="0.00030900681248078">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="13.44969"/>
+                        </Node>
+                        <Node id="24" score="-0.0489999785352109">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-27" score="-0.0327962408260423">
+                      <True/>
+                      <Node id="-28" score="-0.0581755550361118">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="18.26831"/>
+                        <Node id="25" score="-0.0517864088072394">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="62"/>
+                        </Node>
+                        <Node id="26" score="-0.00215278938412666">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-29" score="0.0176528895773539">
+                        <True/>
+                        <Node id="27" score="0.127447754144669">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="48.5"/>
+                        </Node>
+                        <Node id="28" score="-0.0133799007960728">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="29" score="0.0805917490612377">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-30" score="-0.0727015871268052">
+                  <True/>
+                  <Node id="-31" score="-0.0695300396577812">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="47.5"/>
+                    <Node id="-32" score="-0.0713385164737701">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="38.5"/>
+                      <Node id="-33" score="-0.0693869888782501">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="33.5"/>
+                        <Node id="30" score="-0.0518197466929754">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="29.5"/>
+                        </Node>
+                        <Node id="31" score="-0.0517750332752864">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="32" score="-0.0519542023539543">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-34" score="-0.067765672032426">
+                      <True/>
+                      <Node id="33" score="-0.0517749081958424">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                      </Node>
+                      <Node id="-35" score="-0.0674734830856323">
+                        <True/>
+                        <Node id="34" score="-0.0517430338594649">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="43.5"/>
+                        </Node>
+                        <Node id="35" score="-0.0517500539620717">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-36" score="-0.0838709447694861">
+                    <True/>
+                    <Node id="36" score="-0.0523580561081568">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="49.5"/>
+                    </Node>
+                    <Node id="37" score="-0.0520460388877175">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree4">
+        <True/>
+        <TreeModel modelName="Tree4" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="ENTAGE" usageType="active"/>
+            <MiningField name="FOLLOW" usageType="active"/>
+            <MiningField name="PD" usageType="active"/>
+            <MiningField name="FH" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response4" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node4" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00457924012699081">
+            <True/>
+            <Node id="-2" score="0.31357379938593">
+              <SimplePredicate field="FOLLOW" operator="lessThan" value="9.926079"/>
+              <Node id="-3" score="0.0763539296609384">
+                <SimplePredicate field="PD" operator="lessThan" value="0.5"/>
+                <Node id="-4" score="0.178224394398351">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="44.5"/>
+                  <Node id="1" score="0.0102008251767409">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="2" score="0.105044891436895">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-5" score="-0.060949735019518">
+                  <True/>
+                  <Node id="3" score="-0.0515717267990112">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="5.816564"/>
+                  </Node>
+                  <Node id="4" score="-0.0515715425664728">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-6" score="0.445634350334246">
+                <True/>
+                <Node id="-7" score="0.518135541105924">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="49.5"/>
+                  <Node id="5" score="0.0611456284920375">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="34.5"/>
+                  </Node>
+                  <Node id="-8" score="0.58531795564245">
+                    <True/>
+                    <Node id="-9" score="0.764537031000311">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                      <Node id="6" score="0.109969052401456">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="5.368925"/>
+                      </Node>
+                      <Node id="7" score="0.125239198858088">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-10" score="0.48422001569699">
+                      <True/>
+                      <Node id="8" score="0.0432723015546799">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="43.5"/>
+                      </Node>
+                      <Node id="-11" score="0.644876645958942">
+                        <True/>
+                        <Node id="9" score="0.0948974390824636">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="4.661191"/>
+                        </Node>
+                        <Node id="10" score="0.115343115546487">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-12" score="0.225109914938609">
+                  <True/>
+                  <Node id="11" score="0.073720395565033">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="6.079398"/>
+                  </Node>
+                  <Node id="12" score="0.0449371798471971">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-13" score="-0.0365853077725201">
+              <True/>
+              <Node id="-14" score="0.0195055079819569">
+                <SimplePredicate field="FOLLOW" operator="lessThan" value="12.92129"/>
+                <Node id="-15" score="-0.00811791485124598">
+                  <SimplePredicate field="FH" operator="lessThan" value="0.5"/>
+                  <Node id="-16" score="-0.0803897822344745">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                    <Node id="13" score="-0.0561659823764454">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="10.57495"/>
+                    </Node>
+                    <Node id="-17" score="-0.0680401657902917">
+                      <True/>
+                      <Node id="14" score="-0.0515702917025639">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="11.69062"/>
+                      </Node>
+                      <Node id="-18" score="-0.0711345990498861">
+                        <True/>
+                        <Node id="15" score="-0.0517465658485889">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="36.5"/>
+                        </Node>
+                        <Node id="16" score="-0.0519960650375911">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-19" score="0.0221354259076969">
+                    <True/>
+                    <Node id="-20" score="-0.0353824438587312">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="11.69336"/>
+                      <Node id="17" score="0.0421958097389766">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="10.4846"/>
+                      </Node>
+                      <Node id="-21" score="-0.0813717544078827">
+                        <True/>
+                        <Node id="18" score="-0.0520288944244385">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="52.5"/>
+                        </Node>
+                        <Node id="19" score="-0.052605769850991">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-22" score="0.0753609173333467">
+                      <True/>
+                      <Node id="20" score="0.140433528206565">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="11.87953"/>
+                      </Node>
+                      <Node id="-23" score="-0.0118443742394447">
+                        <True/>
+                        <Node id="21" score="-0.0523419794828995">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="12.36277"/>
+                        </Node>
+                        <Node id="22" score="0.0235337940129367">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="23" score="0.112054064869881">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-24" score="-0.0451583276329685">
+                <True/>
+                <Node id="-25" score="-0.043368920658984">
+                  <SimplePredicate field="FOLLOW" operator="lessThan" value="25.45243"/>
+                  <Node id="-26" score="-0.0446854537539655">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="25.21424"/>
+                    <Node id="-27" score="-0.0485451773220313">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="47.5"/>
+                      <Node id="-28" score="-0.0369466254585668">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                        <Node id="24" score="-0.00733001307239683">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="16.76386"/>
+                        </Node>
+                        <Node id="25" score="-0.0393593226496881">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-29" score="-0.0563876162220151">
+                        <True/>
+                        <Node id="26" score="0.000277957073054635">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="13.44969"/>
+                        </Node>
+                        <Node id="27" score="-0.0485644162590824">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-30" score="-0.0298452026989995">
+                      <True/>
+                      <Node id="-31" score="-0.0414213628812869">
+                        <SimplePredicate field="PD" operator="lessThan" value="1.5"/>
+                        <Node id="28" score="-0.0371096898051142">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="23.19644"/>
+                        </Node>
+                        <Node id="29" score="0.0620558045127175">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-32" score="0.0598700387137277">
+                        <True/>
+                        <Node id="30" score="-0.0518776401877403">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="18.23409"/>
+                        </Node>
+                        <Node id="31" score="0.124451021353404">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="32" score="0.0619692152196711">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-33" score="-0.0657709286763118">
+                  <True/>
+                  <Node id="-34" score="-0.062902362258346">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="47.5"/>
+                    <Node id="-35" score="-0.0645381212234497">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="38.5"/>
+                      <Node id="-36" score="-0.0627730190753937">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="33.5"/>
+                        <Node id="33" score="-0.0516405999660492">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="29.5"/>
+                        </Node>
+                        <Node id="34" score="-0.0516004264354706">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="35" score="-0.0517615228891373">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-37" score="-0.0613064998533668">
+                      <True/>
+                      <Node id="36" score="-0.051600304516879">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                      </Node>
+                      <Node id="-38" score="-0.0610422134399414">
+                        <True/>
+                        <Node id="37" score="-0.0515716804398431">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="43.5"/>
+                        </Node>
+                        <Node id="38" score="-0.0515779803196589">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-39" score="-0.0758732660957005">
+                    <True/>
+                    <Node id="39" score="-0.0521238694588343">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="49.5"/>
+                    </Node>
+                    <Node id="40" score="-0.0518438165838068">
+                      <True/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree5">
+        <True/>
+        <TreeModel modelName="Tree5" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="ENTAGE" usageType="active"/>
+            <MiningField name="FOLLOW" usageType="active"/>
+            <MiningField name="PD" usageType="active"/>
+            <MiningField name="FH" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response5" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node5" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00459316856347331">
+            <True/>
+            <Node id="-2" score="0.280212351817958">
+              <SimplePredicate field="FOLLOW" operator="lessThan" value="9.926079"/>
+              <Node id="-3" score="0.0677894486321343">
+                <SimplePredicate field="PD" operator="lessThan" value="0.5"/>
+                <Node id="-4" score="0.15899605904856">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="44.5"/>
+                  <Node id="1" score="0.0090022181209765">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="2" score="0.0801173746585846">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-5" score="-0.0551412105560303">
+                  <True/>
+                  <Node id="3" score="-0.0514176984628042">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="5.816564"/>
+                  </Node>
+                  <Node id="4" score="-0.0514175295829773">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-6" score="0.398468410845884">
+                <True/>
+                <Node id="-7" score="0.46325223739833">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="49.5"/>
+                  <Node id="5" score="0.0495378164684071">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="-8" score="0.539501598903111">
+                    <True/>
+                    <Node id="6" score="0.104915303342483">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                    </Node>
+                    <Node id="-9" score="0.433179708627554">
+                      <True/>
+                      <Node id="7" score="0.0369554422795773">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="43.5"/>
+                      </Node>
+                      <Node id="-10" score="0.576397149459175">
+                        <True/>
+                        <Node id="8" score="0.0775678058465322">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="4.661191"/>
+                        </Node>
+                        <Node id="9" score="0.088723442771218">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-11" score="0.201417565345764">
+                  <True/>
+                  <Node id="10" score="0.0252034320281102">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="65"/>
+                  </Node>
+                  <Node id="11" score="0.0873915119604631">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-12" score="-0.0332444919736126">
+              <True/>
+              <Node id="-13" score="0.0166879239393838">
+                <SimplePredicate field="FOLLOW" operator="lessThan" value="12.92129"/>
+                <Node id="-14" score="-0.00796606110744789">
+                  <SimplePredicate field="FH" operator="lessThan" value="0.5"/>
+                  <Node id="-15" score="-0.0727187262641059">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                    <Node id="12" score="-0.0555861592292786">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="10.57495"/>
+                    </Node>
+                    <Node id="-16" score="-0.0615546259769174">
+                      <True/>
+                      <Node id="13" score="-0.0514164062646719">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="11.69062"/>
+                      </Node>
+                      <Node id="-17" score="-0.064353601137797">
+                        <True/>
+                        <Node id="14" score="-0.0515749007463455">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="36.5"/>
+                        </Node>
+                        <Node id="15" score="-0.0517991483211517">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-18" score="0.0191397038541099">
+                    <True/>
+                    <Node id="-19" score="-0.0322291428042996">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="11.69336"/>
+                      <Node id="16" score="0.0354495836155755">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="10.4846"/>
+                      </Node>
+                      <Node id="-20" score="-0.0736126651366552">
+                        <True/>
+                        <Node id="17" score="-0.0518284874993402">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="52.5"/>
+                        </Node>
+                        <Node id="18" score="-0.0523465167392384">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-21" score="0.0666750509347489">
+                      <True/>
+                      <Node id="19" score="0.101070339029486">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="11.87953"/>
+                      </Node>
+                      <Node id="-22" score="-0.0108651114361627">
+                        <True/>
+                        <Node id="20" score="-0.05211109182109">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="12.36277"/>
+                        </Node>
+                        <Node id="21" score="0.0202488285122496">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="22" score="0.0833287015557289">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-23" score="-0.0408762508456791">
+                <True/>
+                <Node id="-24" score="-0.0702435696711306">
+                  <SimplePredicate field="FOLLOW" operator="lessThan" value="13.43327"/>
+                  <Node id="-25" score="-0.0735682192302886">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="47"/>
+                    <Node id="-26" score="-0.0690256790681319">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="13.14031"/>
+                      <Node id="23" score="-0.0518316897478971">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="40"/>
+                      </Node>
+                      <Node id="24" score="-0.0517451004548506">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="25" score="-0.0520638704299927">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="26" score="-0.0516696635045503">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-27" score="-0.0394327315853835">
+                  <True/>
+                  <Node id="27" score="0.0931323116475886">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="13.51129"/>
+                  </Node>
+                  <Node id="-28" score="-0.0408307393391927">
+                    <True/>
+                    <Node id="-29" score="-0.0418373209045461">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="62"/>
+                      <Node id="-30" score="-0.0537940979003906">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="15.96852"/>
+                        <Node id="28" score="-0.0273157631764646">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="36.5"/>
+                        </Node>
+                        <Node id="29" score="-0.0515160603182656">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="-31" score="-0.0381413540457438">
+                        <True/>
+                        <Node id="30" score="0.0817210078239441">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="16.03833"/>
+                        </Node>
+                        <Node id="31" score="-0.0333431717069691">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="-32" score="0.0119929793088332">
+                      <True/>
+                      <Node id="32" score="0.0738217342983593">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="15.4579"/>
+                      </Node>
+                      <Node id="33" score="-0.0519813100496928">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Tree6">
+        <True/>
+        <TreeModel modelName="Tree6" functionName="regression" algorithmName="MART" missingValueStrategy="none" splitCharacteristic="binarySplit">
+          <MiningSchema>
+            <MiningField name="ENTAGE" usageType="active"/>
+            <MiningField name="FOLLOW" usageType="active"/>
+            <MiningField name="PD" usageType="active"/>
+            <MiningField name="FH" usageType="active"/>
+          </MiningSchema>
+          <Output>
+            <OutputField name="Response6" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Node6" optype="categorical" dataType="integer" feature="entityId"/>
+          </Output>
+          <Node id="-1" score="-0.00446767581865805">
+            <True/>
+            <Node id="-2" score="0.250866138382463">
+              <SimplePredicate field="FOLLOW" operator="lessThan" value="9.926079"/>
+              <Node id="-3" score="0.0603907682277538">
+                <SimplePredicate field="PD" operator="lessThan" value="0.5"/>
+                <Node id="-4" score="0.142209745222522">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="44.5"/>
+                  <Node id="1" score="0.00796312329016234">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="2" score="0.0640386988719304">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-5" score="-0.0498869781908782">
+                  <True/>
+                  <Node id="3" score="-0.0512791474660238">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="5.816564"/>
+                  </Node>
+                  <Node id="4" score="-0.0512790029699152">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="-6" score="0.356903980687722">
+                <True/>
+                <Node id="-7" score="0.415004390559784">
+                  <SimplePredicate field="ENTAGE" operator="lessThan" value="49.5"/>
+                  <Node id="5" score="0.0415839763248668">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="37.5"/>
+                  </Node>
+                  <Node id="-8" score="0.483263220105852">
+                    <True/>
+                    <Node id="6" score="0.0858001428491929">
+                      <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                    </Node>
+                    <Node id="-9" score="0.388218170557267">
+                      <True/>
+                      <Node id="7" score="0.0318657048046589">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="43.5"/>
+                      </Node>
+                      <Node id="-10" score="0.51629754771357">
+                        <True/>
+                        <Node id="8" score="0.0556333227591081">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="4.083505"/>
+                        </Node>
+                        <Node id="9" score="0.0819632609685262">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="-11" score="0.180181900660197">
+                  <True/>
+                  <Node id="10" score="0.0499073404532212">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="6.079398"/>
+                  </Node>
+                  <Node id="11" score="0.0285635265437039">
+                    <True/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="-12" score="-0.0301541551441292">
+              <True/>
+              <Node id="-13" score="0.023084724744161">
+                <SimplePredicate field="FOLLOW" operator="lessThan" value="12.38193"/>
+                <Node id="-14" score="0.00192805779153022">
+                  <SimplePredicate field="FH" operator="lessThan" value="0.5"/>
+                  <Node id="-15" score="-0.0421472787857056">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="11.69336"/>
+                    <Node id="12" score="0.00965065705148797">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="10.45175"/>
+                    </Node>
+                    <Node id="-16" score="-0.0627116302945721">
+                      <True/>
+                      <Node id="-17" score="-0.0598312956946237">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="52.5"/>
+                        <Node id="13" score="-0.0513720575131868">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="40.5"/>
+                        </Node>
+                        <Node id="14" score="-0.0516485298002088">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="15" score="-0.0521140640432184">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="-18" score="0.0748218802305368">
+                    <True/>
+                    <Node id="16" score="0.0812905530134837">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="11.83847"/>
+                    </Node>
+                    <Node id="-19" score="-0.0178835347294807">
+                      <True/>
+                      <Node id="-20" score="-0.0677809180884526">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="12.28747"/>
+                        <Node id="17" score="-0.0514518486128913">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="45"/>
+                        </Node>
+                        <Node id="18" score="-0.0530289140614596">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="19" score="0.0866806398738514">
+                        <True/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="20" score="0.0654603590567907">
+                  <True/>
+                </Node>
+              </Node>
+              <Node id="-21" score="-0.0360652068030119">
+                <True/>
+                <Node id="-22" score="-0.0890241691044399">
+                  <SimplePredicate field="FOLLOW" operator="lessThan" value="12.79671"/>
+                  <Node id="-23" score="-0.0772440433502197">
+                    <SimplePredicate field="ENTAGE" operator="lessThan" value="48.5"/>
+                    <Node id="21" score="-0.0531444983048873">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="12.57495"/>
+                    </Node>
+                    <Node id="22" score="-0.0517312089602152">
+                      <True/>
+                    </Node>
+                  </Node>
+                  <Node id="23" score="-0.0533742556969325">
+                    <True/>
+                  </Node>
+                </Node>
+                <Node id="-24" score="-0.034656724668926">
+                  <True/>
+                  <Node id="24" score="0.0923513174057007">
+                    <SimplePredicate field="FOLLOW" operator="lessThan" value="12.92129"/>
+                  </Node>
+                  <Node id="-25" score="-0.036967296571043">
+                    <True/>
+                    <Node id="-26" score="-0.0635476268705775">
+                      <SimplePredicate field="FOLLOW" operator="lessThan" value="13.43327"/>
+                      <Node id="-27" score="-0.066554898307437">
+                        <SimplePredicate field="ENTAGE" operator="lessThan" value="47"/>
+                        <Node id="25" score="-0.051613374189897">
+                          <SimplePredicate field="FOLLOW" operator="lessThan" value="13.14031"/>
+                        </Node>
+                        <Node id="26" score="-0.0518599033355713">
+                          <True/>
+                        </Node>
+                      </Node>
+                      <Node id="27" score="-0.0515060518917285">
+                        <True/>
+                      </Node>
+                    </Node>
+                    <Node id="-28" score="-0.0356607706099148">
+                      <True/>
+                      <Node id="28" score="0.0698108944025907">
+                        <SimplePredicate field="FOLLOW" operator="lessThan" value="13.51129"/>
+                      </Node>
+                      <Node id="-29" score="-0.0369109208021707">
+                        <True/>
+                        <Node id="29" score="-0.0337802441335455">
+                          <SimplePredicate field="ENTAGE" operator="lessThan" value="62"/>
+                        </Node>
+                        <Node id="30" score="0.00695577911708666">
+                          <True/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </TreeModel>
+      </Segment>
+      <Segment id="Final">
+        <True/>
+        <RegressionModel modelName="Final" algorithmName="MART" functionName="classification" normalizationMethod="logit">
+          <MiningSchema>
+            <MiningField name="FATE" usageType="predicted"/>
+            <MiningField name="Response1" usageType="active"/>
+            <MiningField name="Response2" usageType="active"/>
+            <MiningField name="Response3" usageType="active"/>
+            <MiningField name="Response4" usageType="active"/>
+            <MiningField name="Response5" usageType="active"/>
+            <MiningField name="Response6" usageType="active"/>
+            <!--If an INIT variable is to be used, then uncomment the element below and change the variable name.-->
+            <!--MiningField name='init' usageType='active'-->
+          </MiningSchema>
+          <RegressionTable intercept="0" targetCategory="1">
+            <!--If an INIT variable is used, then uncomment the following element and change the variable name-->
+            <!--NumericPredictor name='init' coefficient='1'-->
+            <NumericPredictor name="Response1" coefficient="2"/>
+            <NumericPredictor name="Response2" coefficient="2"/>
+            <NumericPredictor name="Response3" coefficient="2"/>
+            <NumericPredictor name="Response4" coefficient="2"/>
+            <NumericPredictor name="Response5" coefficient="2"/>
+            <NumericPredictor name="Response6" coefficient="2"/>
+          </RegressionTable>
+          <RegressionTable intercept="0.0" targetCategory="0"/>
+        </RegressionModel>
+      </Segment>
+    </Segmentation>
+  </MiningModel>
+</PMML>
+
