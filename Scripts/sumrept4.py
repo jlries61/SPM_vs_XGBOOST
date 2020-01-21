@@ -63,7 +63,7 @@ for i in dsl.index:
     tn_filename_root = "treenetx_score_test_"
   elif besttn == 4:
     tn_filename_root = "treenet2x_score_test_"
-  for irepl in range(1, nrepl):
+  for irepl in range(1, nrepl + 1):
     roc_row = dict()
     tn_score_file = reptdir + SLASH + tn_filename_root + str(irepl) + ".csv"
     xgb_score_file = reptdir + SLASH + xgb_filename_root + str(irepl) + ".csv"

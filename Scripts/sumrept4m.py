@@ -5,15 +5,22 @@ import pandas as pd
 import re
 from sklearn.metrics import roc_auc_score
 
+def rng(series):
+  return series.max() - series.min()
+
 # Define constants
 SPREAD = "../Datasets4.xlsx" # Input dataset information spreadsheet
-OUTFILE = "../Reports/tn_vs_xgb_sumrept4m.xlsx" # Summary report spreadsheet to create
-fields = ["Name", "N Replications", "N Features", "N Learn", "N Holdout",
-          "Avg ROC (TN; MART)", "Avg ROC (TN; RGBOOST, MHESS=0)", "Avg ROC (TN; RGBOOST, MHESS=1)",
-          "Avg ROC (XGB)", "StdDev ROC (TN; MART)", "StdDev ROC (TN; RGB MHESS=0)",
-          "StdDev ROC (TN; RGB MHESS=1)", "StdDev ROC (XGB)", "Avg Delta_ROC (Best TN vs XGB)",
-          "Min Delta ROC (Best TN vs XGB)", "Max Delta ROC (Best TN vs XGB)",
-          "StdDev Delta ROC (Best TN vs XGB)"] # Report field names
+OUTFILE = "../Reports/tn_vs_xgb_sumrept4m.xlsx" # Summary report workbook to create
+fields1 = ["Name", "N Replications", "N Features", "N Learn", "N Holdout",
+           "Avg ROC (TN; MART)", "Avg ROC (TN; RGBOOST, MHESS=0)", "Avg ROC (TN; RGBOOST, MHESS=1)",
+           "Avg ROC (XGB)", "StdDev ROC (TN; MART)", "StdDev ROC (TN; RGB MHESS=0)",
+           "StdDev ROC (TN; RGB MHESS=1)", "StdDev ROC (XGB)", "Avg Delta_ROC (Best TN vs XGB)",
+           "Min Delta ROC (Best TN vs XGB)", "Max Delta ROC (Best TN vs XGB)",
+           "StdDev Delta ROC (Best TN vs XGB)"]
+fields2 = ["Name", "Stat", "ROC(TN; MART)", "ROC(TN; RGBOOST; MHESS=0)",
+           "ROC(TN; RGBOOST; MHESS=1)", "ROC(XGBoost)"]
+sheet1name = "Summary"
+sheet2name = "ByDataset"
 REPTDIR = "../Reports/RGBOOST4M" # Directory from which to pull the model results
 DATADIR = "../Data/Classification" # Repository of classification model datasets
 SLASH = "/"
@@ -28,8 +35,9 @@ roccols.append("Delta")
 # Read input dataset information spreadsheet
 dsl = pd.read_excel(SPREAD)
 
-# Initialize output data frame
-summary = pd.DataFrame(columns=fields)
+# Initialize output data frames
+summary = pd.DataFrame(columns = fields1)
+detail = pd.DataFrame(columns = fields2)
 
 for i in dsl.index: # For each input dataset
   dataname = dsl.loc[i, "Name"]
@@ -75,7 +83,7 @@ for i in dsl.index: # For each input dataset
 
   # Define ROC data frame
   roc = pd.DataFrame(columns=roccols)
-  for irepl in range(1, nrepl):
+  for irepl in range(1, nrepl + 1):
     roc_row = dict()
     for rootname in filename_root:
       score_file = reptdir + SLASH + rootname + "_score_test_" + str(irepl) + ".csv"
@@ -97,8 +105,31 @@ for i in dsl.index: # For each input dataset
   row["Min Delta ROC (Best TN vs XGB)"] = roc["Delta"].min()
   row["Max Delta ROC (Best TN vs XGB)"] = roc["Delta"].max()
   row["StdDev Delta ROC (Best TN vs XGB)"] = roc["Delta"].std()
-  del roc # Why keep it around longer than I need to?
   summary = summary.append(row, ignore_index=True)
 
+  # Add by model type descriptive stats to the detail report
+  mean_row = dict({"Name":dataname, "Stat":"Mean", fields2[2]:row["Avg ROC (TN; MART)"],
+                   fields2[3]:row["Avg ROC (TN; RGBOOST, MHESS=0)"],
+                   fields2[4]:row["Avg ROC (TN; RGBOOST, MHESS=1)"],
+                   fields2[5]:row["Avg ROC (XGB)"]})
+  min_row = dict({"Name":dataname, "Stat":"Min", fields2[2]:roc["mart"].min(),
+                  fields2[3]:roc["treenet"].min(), fields2[4]:roc["treenet2"].min(),
+                  fields2[5]:roc["xgb"].min()})
+  max_row = dict({"Name":dataname, "Stat":"Max", fields2[2]:roc["mart"].max(),
+                  fields2[3]:roc["treenet"].max(), fields2[4]:roc["treenet2"].max(),
+                  fields2[5]:roc["xgb"].min()})
+  range_row = dict({"Name":dataname, "Stat":"Range", fields2[2]:rng(roc["mart"]),
+                    fields2[3]:rng(roc["treenet"]), fields2[4]:rng(roc["treenet2"]),
+                    fields2[5]:rng(roc["xgb"])})
+  std_row = dict({"Name":dataname, "Stat":"Std", fields2[2]:row["StdDev ROC (TN; MART)"],
+                  fields2[3]:row["StdDev ROC (TN; RGB MHESS=0)"],
+                  fields2[4]:row["StdDev ROC (TN; RGB MHESS=1)"],
+                  fields2[5]:row["StdDev ROC (XGB)"]})
+  del roc # Why keep it around longer than I need to?
+  detail = detail.append(pd.DataFrame([mean_row, min_row, max_row, range_row, std_row]),
+                         ignore_index=True)
+
 # Write summary frame to the output spreadsheet
-summary.to_excel(OUTFILE, index=False)
+with pd.ExcelWriter(path = OUTFILE) as outwrite:
+  summary.to_excel(outwrite, sheet_name = "Summary", index = False)
+  detail.to_excel(outwrite, sheet_name = "ByDataset", index = False, float_format = "%.4f")
