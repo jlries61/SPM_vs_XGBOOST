@@ -15,7 +15,7 @@ if not os.path.isdir(report_folder):
     os.mkdir(report_folder)
 dsl = pd.read_excel("../Datasets4.xlsx")
 COMMA = ","
-datasets_nums = [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17]
+datasets_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
 
 cases = {'_RGLs-0_INF-0.0_SUBS-1.0_LR-0.1_DEPTH-7_PREDS-500_NTREES-400': {'NTREES': '400'}}
 
